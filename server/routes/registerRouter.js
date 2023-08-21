@@ -1,9 +1,9 @@
 import express from 'express';
 
-const registerRouter = express.Router();
+const router = express.Router();
 
-registerRouter.get('/', (req, res) => {
+router.get('/', (req, res) => {
   res.render('register');
 });
 
-export default registerRouter;
+export default router;

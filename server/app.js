@@ -2,7 +2,7 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import express from 'express';
-import validator from 'validator';
+import bcryptjs from 'bcryptjs';
 
 /* routers module */
 import loginRouter from './routes/loginRouter.js';
@@ -22,6 +22,11 @@ app.set('views', path.join(__dirname, '../client/views'));
 app.use(express.static('../client/public'));
 
 /* routing */
+app.use((req, res, next) => {
+  const password = 'a12345';
+  next();
+});
+
 app.use('/', loginRouter);
 app.use('/register', registerRouter);
 app.use('/user', userRouter);

@@ -1,9 +1,13 @@
 import express from 'express';
 
-const loginRouter = express.Router();
+const router = express.Router();
 
-loginRouter.get('/', (req, res) => {
+router.get('/', (req, res) => {
   res.render('login');
 });
 
-export default loginRouter;
+router.post('/', (req, res) => {
+  console.log(req.url);
+});
+
+export default router;
