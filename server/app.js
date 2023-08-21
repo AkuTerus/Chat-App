@@ -2,6 +2,7 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import express from 'express';
+import expressEjsLayouts from 'express-ejs-layouts';
 import bcryptjs from 'bcryptjs';
 
 /* routers module */
@@ -19,11 +20,13 @@ const __dirname = path.dirname(__filename);
 /* define global middlewares ? */
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '../client/views'));
+app.use(expressEjsLayouts);
+app.set('layout', 'layouts/layout');
+app.set('layout extractScripts', true);
 app.use(express.static('../client/public'));
 
 /* routing */
 app.use((req, res, next) => {
-  const password = 'a12345';
   next();
 });
 
