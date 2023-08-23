@@ -2,13 +2,15 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomBytes } from 'node:crypto';
+
+/* node_modules */
 import express from 'express';
 import expressEjsLayouts from 'express-ejs-layouts';
 import session from 'express-session';
 import flash from 'connect-flash';
 import bcryptjs from 'bcryptjs';
 
-/* routers module */
+/* router modules */
 import loginRouter from './routes/loginRouter.js';
 import registerRouter from './routes/registerRouter.js';
 import userRouter from './routes/userRouter.js';
@@ -41,6 +43,7 @@ app.set('layout extractScripts', true);
 
 /* routing */
 app.use((req, res, next) => {
+  console.log(req.url);
   next();
 });
 
@@ -49,4 +52,4 @@ app.use('/login', loginRouter);
 app.use('/register', registerRouter);
 app.use('/chat', chatRouter);
 
-app.listen(PORT, () => console.log(`server listening at http://localhost:${PORT} ...`));
+app.listen(PORT, () => console.log(`server running at http://localhost:${PORT} ...`));
