@@ -1,32 +1,34 @@
 <section class="form signup">
   <header>Chat App</header>
-  <form action="#">
-    <div class="error-txt">This an error message!</div>
+  <form method="post" action="/register" enctype="multipart/form-data">
+    <% if (errors.length > 0) { %>
+    <div class="error-txt"><%- errors.map(err => err.msg).join('<br />') %></div>
+    <% } %>
     <div class="name-details">
       <div class="field input">
         <label>First Name</label>
-        <input type="text" placeholder="First Name" />
+        <input type="text" name="firstname" placeholder="First Name" />
       </div>
       <div class="field input">
         <label>Last Name</label>
-        <input type="text" placeholder="Last Name" />
+        <input type="text" name="lastname" placeholder="Last Name" />
       </div>
     </div>
     <div class="field input">
       <label>Email Address</label>
-      <input type="text" placeholder="Enter your email" />
+      <input type="text" name="email" placeholder="Enter your email" />
     </div>
     <div class="field input">
       <label>Password</label>
-      <input type="password" placeholder="Enter your password" />
+      <input type="password" name="password" placeholder="Enter your password" />
       <i class="fas fa-eye"></i>
     </div>
     <div class="field image">
       <label>Select Image</label>
-      <input type="file" />
+      <input type="file" name="avatar" />
     </div>
     <div class="field button">
-      <input type="submit" value="Countinue to Chat" />
+      <input type="submit" value="Continue to Chat" />
     </div>
   </form>
   <div class="link">Already signed up? <a href="#">Login now</a></div>
