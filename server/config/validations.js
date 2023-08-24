@@ -1,4 +1,3 @@
-import fs from 'node:fs/promises';
 import bcryptjs from 'bcryptjs';
 import { isNewEmail } from '../models/registerModel.js';
 import { getUserByEmail } from '../models/loginModel.js';
@@ -79,7 +78,6 @@ export const registerSchemas = {
 
         const maxSize = 3 * 1024 * 1024; // 3MB
         if (req.file.size > maxSize) {
-          await fs.unlink(req.file.path);
           throw new Error(`File cannot exceed 3 MB`);
         }
         return true;
@@ -92,7 +90,6 @@ export const registerSchemas = {
 
         const allowedFileTypes = ['image/png', 'image/jpg', 'image/jpeg'];
         if (!allowedFileTypes.includes(req.file.mimetype)) {
-          await fs.unlink(req.file.path);
           throw new Error('Invalid file type. Allowed types: png, jpg, jpeg');
         }
         return true;

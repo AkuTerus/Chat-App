@@ -1,3 +1,4 @@
+import fs from 'node:fs/promises';
 import { randomBytes, createHash } from 'node:crypto';
 import express from 'express';
 import { checkSchema, matchedData, validationResult } from 'express-validator';
@@ -22,9 +23,10 @@ router.post(
   [
     upload.single('avatar'),
     checkSchema(registerSchemas, ['body']),
-    (req, res, next) => {
+    async (req, res, next) => {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
+        await fs.unlink(req.file.path);
         req.flash('validation_errors', errors.array());
         return res.redirect(req.originalUrl);
       }
