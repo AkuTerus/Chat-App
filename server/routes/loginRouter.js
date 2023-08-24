@@ -2,11 +2,12 @@ import { randomBytes, createHash } from 'node:crypto';
 import express from 'express';
 import { checkSchema, matchedData, validationResult } from 'express-validator';
 import bcryptjs from 'bcryptjs';
-import { loginSchemas } from '../middlewares/validationSchemas.js';
+import { loginSchemas } from '../config/validations.js';
 import { getUserByEmail } from '../models/loginModel.js';
 
 const router = express.Router();
 
+// GET /login
 router.get('/', (req, res) => {
   res.render('login', {
     title: 'Login',
@@ -14,6 +15,7 @@ router.get('/', (req, res) => {
   });
 });
 
+// POST /login
 router.post(
   '/',
   [
@@ -30,22 +32,6 @@ router.post(
   async (req, res) => {
     // get validated data (from req.body)
     const body = matchedData(req);
-
-    // query to database to check if user with such email exists
-    const user = await getUserByEmail(body.email);
-
-    // if user falsy(undefined in this case), redirect with error msg
-    if (!user) {
-      req.flash('validation_errors', 'Unauthorized User to Login');
-      return res.redirect('/login');
-    }
-
-    // if password doesn't match, redirect with error msg
-    const verifyPassword = user ? await bcryptjs.compare(body.password, user.password) : false;
-    if (!verifyPassword) {
-      req.flash('validation_errors', 'Unauthorized User to Login');
-      return res.redirect('/login');
-    }
 
     // login success, create session login and redirect to root
     req.session.login = createHash('sha256').update(randomBytes(32)).digest('base64');

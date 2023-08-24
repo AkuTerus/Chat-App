@@ -1,5 +1,4 @@
 import fs from 'node:fs/promises';
-import { body } from 'express-validator';
 import bcryptjs from 'bcryptjs';
 import { isNewEmail } from '../models/registerModel.js';
 import { getUserByEmail } from '../models/loginModel.js';
@@ -7,10 +6,19 @@ import { getUserByEmail } from '../models/loginModel.js';
 export const loginSchemas = {
   email: {
     notEmpty: { errorMessage: 'Email cannot be empty', bail: true },
-    isEmail: { errorMessage: 'Invalid Email format' },
+    isEmail: { errorMessage: 'Invalid Email format', bail: true },
+    _isEmailExist: {
+      custom: async (value, { req }) => {
+        const user = await getUserByEmail(value);
+        if (!user || (user && !bcryptjs.compareSync(req.body.password, user.password))) {
+          throw new Error('Unauthorized User to Login');
+        }
+        return true;
+      },
+    },
   },
   password: {
-    notEmpty: { errorMessage: 'Password cannot be empty' },
+    notEmpty: { errorMessage: 'Password cannot be empty', bail: true },
   },
 };
 
