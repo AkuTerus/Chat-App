@@ -10,10 +10,12 @@ import session from 'express-session';
 import flash from 'connect-flash';
 
 /* router modules */
-import loginRouter from './routes/loginRouter.js';
-import registerRouter from './routes/registerRouter.js';
 import userRouter from './routes/userRouter.js';
 import chatRouter from './routes/chatRouter.js';
+import registerRouter from './routes/registerRouter.js';
+import loginRouter from './routes/loginRouter.js';
+import logoutRouter from './routes/logoutRouter.js';
+import { mustLoggedIn, mustLoggedOut } from './middlewares/loginAuth.js';
 
 /* declaration */
 const app = express();
@@ -41,19 +43,34 @@ app.set('views', '../client/views');
 app.set('layout', 'layouts/layout');
 app.set('layout extractScripts', true);
 
-/* routing */
+/*
+|-----------------------------------------------------------------------------
+| Routing
+|-----------------------------------------------------------------------------
+*/
+
+/* first middleware for logging, etc */
 app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url} -- `, new Date().toLocaleString());
+  console.log(`${req.method} ${req.path} -- `, new Date().toLocaleString());
   next();
 });
 
-app.use('/', userRouter);
-app.use('/login', loginRouter);
-app.use('/register', registerRouter);
-app.use('/chat', chatRouter);
+/* redirect root path */
+app.get('/', (req, res) => {
+  return res.redirect('/user');
+});
 
+/* application path routing */
+app.use('/register', mustLoggedOut, registerRouter);
+app.use('/login', mustLoggedOut, loginRouter);
+app.use('/logout', logoutRouter);
+app.use('/user', mustLoggedIn, userRouter);
+app.use('/chat', mustLoggedIn, chatRouter);
+
+/* 404 routing handler */
 app.use((req, res, next) => {
   res.status(404).send('<h1>404 Not Found</h1>');
 });
 
+/* express app listener */
 app.listen(PORT, () => console.log(`server running at http://localhost:${PORT} ...`));
