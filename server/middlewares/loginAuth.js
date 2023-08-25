@@ -10,13 +10,13 @@ export function createTokenOnSuccessLogin(req, res, next) {
 
 // export
 export async function accessibleOnLogin(req, res, next) {
-  const validUserData = await validateLogin(req);
-  if (!validUserData) {
-    req.session.user = undefined;
+  const loginDetail = await validateLogin(req);
+  if (!loginDetail) {
+    req.session.userEmail = undefined;
     console.log(`Middleware - loginAuth | Invalid Token redirect to login`);
     return res.redirect('/login');
   }
-  req.session.user = validUserData;
+  req.session.userEmail = loginDetail.email;
   next();
 }
 
@@ -42,12 +42,5 @@ async function validateLogin(req) {
   if (!loginDetail) return false;
   if (loginDetail.ip != req.ip) return false;
 
-  const queryUser = `SELECT * from users WHERE email=?`;
-  const [[user]] = await db.execute(queryUser, [loginDetail.email]);
-
-  return {
-    name: user.name,
-    email: user.email,
-    avatar: user.avatar,
-  };
+  return loginDetail;
 }

@@ -5,7 +5,7 @@ import { checkSchema, matchedData, validationResult } from 'express-validator';
 import bcryptjs from 'bcryptjs';
 import upload from '../config/upload.js';
 import { registerSchemas } from '../config/validations.js';
-import { createUser } from '../models/registerModel.js';
+import { createUser, insertLoginDetails } from '../models/registerModel.js';
 import { createTokenOnSuccessLogin } from '../middlewares/loginAuth.js';
 
 const router = express.Router();
@@ -44,7 +44,8 @@ router.post(
     const data = [name, email, passwordHashed, avatar];
     const insert = await createUser(data);
 
-    req.session.token = createHash('sha256').update(randomBytes(32)).digest('base64');
+    const dataLogin = [req.body.email, req.session.token, req.ip];
+    const insertLoginDetail = await insertLoginDetails(dataLogin);
     return res.redirect('/');
   }
 );
