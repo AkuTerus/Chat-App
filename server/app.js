@@ -15,7 +15,7 @@ import chatRouter from './routes/chatRouter.js';
 import registerRouter from './routes/registerRouter.js';
 import loginRouter from './routes/loginRouter.js';
 import logoutRouter from './routes/logoutRouter.js';
-import { mustLoggedIn, mustLoggedOut } from './middlewares/loginAuth.js';
+import { accessibleOnLogin, accessibleOnLogout } from './middlewares/loginAuth.js';
 
 /* declaration */
 const app = express();
@@ -24,8 +24,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /* define global middlewares ? */
+app.use('/uploads', express.static('../uploads'));
 app.use(express.static('../client/public'));
-app.use(express.static('../uploads'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -52,6 +52,7 @@ app.set('layout extractScripts', true);
 /* first middleware for logging, etc */
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path} -- `, new Date().toLocaleString());
+  console.log(`session keys: [${Object.keys(req.session)}]`);
   next();
 });
 
@@ -61,11 +62,11 @@ app.get('/', (req, res) => {
 });
 
 /* application path routing */
-app.use('/register', mustLoggedOut, registerRouter);
-app.use('/login', mustLoggedOut, loginRouter);
+app.use('/register', accessibleOnLogout, registerRouter);
+app.use('/login', accessibleOnLogout, loginRouter);
 app.use('/logout', logoutRouter);
-app.use('/user', mustLoggedIn, userRouter);
-app.use('/chat', mustLoggedIn, chatRouter);
+app.use('/user', accessibleOnLogin, userRouter);
+app.use('/chat', accessibleOnLogin, chatRouter);
 
 /* 404 routing handler */
 app.use((req, res, next) => {
