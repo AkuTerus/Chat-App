@@ -50,6 +50,13 @@ app.set('layout extractScripts', true);
 */
 
 /* first middleware for logging, etc */
+/*
+|-----------------------------------------------------------------------------
+| Routing
+|-----------------------------------------------------------------------------
+*/
+
+/* first middleware for logging, etc */
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path} -- `, new Date().toLocaleString());
   console.log(`session keys: [${Object.keys(req.session)}]`);
@@ -69,9 +76,11 @@ app.use('/user', accessibleOnLogin, userRouter);
 app.use('/chat', accessibleOnLogin, chatRouter);
 
 /* 404 routing handler */
+/* 404 routing handler */
 app.use((req, res, next) => {
   res.status(404).send('<h1>404 Not Found</h1>');
 });
 
+/* express app listener */
 /* express app listener */
 app.listen(PORT, () => console.log(`server running at http://localhost:${PORT} ...`));
