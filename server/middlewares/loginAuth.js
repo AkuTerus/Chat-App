@@ -25,7 +25,7 @@ export async function accessibleOnLogout(req, res, next) {
   const isLoginValid = await validateLogin(req);
   if (isLoginValid) {
     console.log(`Middelware - loginAuth | Already Logged In redirect back`);
-    return res.redirect(req.originalUrl);
+    return res.redirect('back');
   }
   next();
 }
