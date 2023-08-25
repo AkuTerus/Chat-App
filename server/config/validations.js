@@ -9,7 +9,7 @@ export const loginSchemas = {
     _isEmailExist: {
       custom: async (value, { req }) => {
         const user = await getUserByEmail(value);
-        if (!user || (user && !bcryptjs.compareSync(req.body.password, user.password))) {
+        if (!user || (user && !bcryptjs.compareSync(req.body.password, user?.password))) {
           throw new Error('Unauthorized User to Login');
         }
         return true;
