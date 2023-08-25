@@ -1,9 +1,8 @@
-import { randomBytes, createHash } from 'node:crypto';
 import express from 'express';
 import { checkSchema, matchedData, validationResult } from 'express-validator';
-import bcryptjs from 'bcryptjs';
 import { loginSchemas } from '../config/validations.js';
-import { getUserByEmail } from '../models/loginModel.js';
+import { insertLoginDetails } from '../models/loginModel.js';
+import { createTokenOnSuccessLogin } from '../middlewares/loginAuth.js';
 
 const router = express.Router();
 
@@ -28,13 +27,14 @@ router.post(
       }
       next();
     },
+    createTokenOnSuccessLogin,
   ],
   async (req, res) => {
-    // get validated data (from req.body)
-    const body = matchedData(req);
+    // login success
+    // insert login_details
+    const data = [req.body.email, req.session.token, req.ip];
+    const insert = await insertLoginDetails(data);
 
-    // login success, create session login and redirect to root
-    req.session.login = createHash('sha256').update(randomBytes(32)).digest('base64');
     res.redirect('/');
   }
 );
