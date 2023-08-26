@@ -27,8 +27,8 @@ router.post(
       }
       next();
     },
-    createTokenOnSuccessLogin,
   ],
+  createTokenOnSuccessLogin,
   async (req, res) => {
     // login success
     // insert login_details

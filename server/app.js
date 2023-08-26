@@ -16,6 +16,7 @@ import registerRouter from './routes/registerRouter.js';
 import loginRouter from './routes/loginRouter.js';
 import logoutRouter from './routes/logoutRouter.js';
 import { accessibleOnLogin, accessibleOnLogout } from './middlewares/loginAuth.js';
+import cookieParser from 'cookie-parser';
 
 /* declaration */
 const app = express();
@@ -28,6 +29,7 @@ app.use('/uploads', express.static('../uploads'));
 app.use(express.static('../client/public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(
   session({
     secret: randomBytes(32).toString('hex'),
@@ -52,7 +54,6 @@ app.set('layout extractScripts', true);
 /* first middleware for logging, etc */
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path} -- `, new Date().toLocaleString());
-  console.log(`session keys: [${Object.keys(req.session)}]`);
   next();
 });
 

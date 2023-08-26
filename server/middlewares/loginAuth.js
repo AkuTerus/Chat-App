@@ -8,6 +8,21 @@ export function createTokenOnSuccessLogin(req, res, next) {
   next();
 }
 
+async function validateLogin(req) {
+  // check token exists
+  if (!req.session.token) return false;
+
+  // get loginDetail from token and email
+  const queryLoginDetail = `SELECT * FROM login_details WHERE token=?`;
+  const [[loginDetail]] = await db.execute(queryLoginDetail, [req.session.token]);
+
+  // validate loginDetail
+  if (!loginDetail) return false;
+  if (loginDetail.ip != req.ip) return false;
+
+  return loginDetail;
+}
+
 // export
 export async function accessibleOnLogin(req, res, next) {
   const loginDetail = await validateLogin(req);
@@ -28,19 +43,4 @@ export async function accessibleOnLogout(req, res, next) {
     return res.redirect('back');
   }
   next();
-}
-
-async function validateLogin(req) {
-  // check token exists
-  if (!req.session.token) return false;
-
-  // get loginDetail from token and email
-  const queryLoginDetail = `SELECT * FROM login_details WHERE token=?`;
-  const [[loginDetail]] = await db.execute(queryLoginDetail, [req.session.token]);
-
-  // validate loginDetail
-  if (!loginDetail) return false;
-  if (loginDetail.ip != req.ip) return false;
-
-  return loginDetail;
 }
