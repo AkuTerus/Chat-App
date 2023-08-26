@@ -1,13 +1,13 @@
 <section class="users">
   <header>
     <div class="content">
-      <img src="img/images.jpeg" alt="" />
+      <img src="<%- user?.avatar ? 'uploads/'+user.avatar : 'img/default-avatar.jpg' %>" alt="" />
       <div class="details">
-        <span>Baruak Tampan</span>
+        <span><%- user.name %></span>
         <p>Online</p>
       </div>
     </div>
-    <a href="#" class="logout">Logout</a>
+    <a href="/logout" class="logout" onclick="return alert('Logged Out')">Logout</a>
   </header>
   <div class="search">
     <span class="text">Select an user to start chat</span>
@@ -35,76 +35,6 @@
       </div>
       <div class="status-dot"><i class="fas fa-circle"></i></div> </a
     ><a href="">
-      <div class="content">
-        <img src="img/images.jpeg" alt="" />
-        <div class="details">
-          <span>Baruak Tampan</span>
-          <p>test Message</p>
-        </div>
-      </div>
-      <div class="status-dot"><i class="fas fa-circle"></i></div>
-    </a>
-    <a href="">
-      <div class="content">
-        <img src="img/images.jpeg" alt="" />
-        <div class="details">
-          <span>Baruak Tampan</span>
-          <p>test Message</p>
-        </div>
-      </div>
-      <div class="status-dot"><i class="fas fa-circle"></i></div>
-    </a>
-    <a href="">
-      <div class="content">
-        <img src="img/images.jpeg" alt="" />
-        <div class="details">
-          <span>Baruak Tampan</span>
-          <p>test Message</p>
-        </div>
-      </div>
-      <div class="status-dot"><i class="fas fa-circle"></i></div>
-    </a>
-    <a href="">
-      <div class="content">
-        <img src="img/images.jpeg" alt="" />
-        <div class="details">
-          <span>Baruak Tampan</span>
-          <p>test Message</p>
-        </div>
-      </div>
-      <div class="status-dot"><i class="fas fa-circle"></i></div>
-    </a>
-    <a href="">
-      <div class="content">
-        <img src="img/images.jpeg" alt="" />
-        <div class="details">
-          <span>Baruak Tampan</span>
-          <p>test Message</p>
-        </div>
-      </div>
-      <div class="status-dot"><i class="fas fa-circle"></i></div>
-    </a>
-    <a href="">
-      <div class="content">
-        <img src="img/images.jpeg" alt="" />
-        <div class="details">
-          <span>Baruak Tampan</span>
-          <p>test Message</p>
-        </div>
-      </div>
-      <div class="status-dot"><i class="fas fa-circle"></i></div>
-    </a>
-    <a href="">
-      <div class="content">
-        <img src="img/images.jpeg" alt="" />
-        <div class="details">
-          <span>Baruak Tampan</span>
-          <p>test Message</p>
-        </div>
-      </div>
-      <div class="status-dot"><i class="fas fa-circle"></i></div>
-    </a>
-    <a href="">
       <div class="content">
         <img src="img/images.jpeg" alt="" />
         <div class="details">
