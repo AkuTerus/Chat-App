@@ -11,7 +11,7 @@ import { createTokenOnSuccessLogin } from '../middlewares/loginAuth.js';
 const router = express.Router();
 
 // GET /register
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   res.render('register', {
     title: 'Register',
     errors: req.flash('validation_errors'),
@@ -27,7 +27,7 @@ router.post(
     async (req, res, next) => {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        await fs.unlink(req.file.path);
+        await fs.unlink(req.file.path); // remove previously uploaded file
         req.flash('validation_errors', errors.array());
         return res.redirect(req.originalUrl);
       }
@@ -39,7 +39,18 @@ router.post(
     const name = req.body.firstname + ' ' + req.body.lastname;
     const email = req.body.email;
     const passwordHashed = bcryptjs.hashSync(req.body.password);
-    const avatar = req.file ? req.file.filename : null;
+
+    // if no uploaded files, set default avatar
+    let avatar = req.file?.filename;
+    if (!avatar) {
+      const dir = '../uploads/default';
+      const availableFiles = await fs.readdir(dir);
+      if (availableFiles.length > 0) {
+        const randomIndex = Math.floor(Math.random() * availableFiles.length);
+        const randomFileName = availableFiles[randomIndex];
+        avatar = 'default/' + randomFileName;
+      }
+    }
 
     const data = [name, email, passwordHashed, avatar];
     const insert = await createUser(data);
