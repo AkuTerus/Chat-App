@@ -1,7 +1,7 @@
 <section class="users">
   <header>
     <div class="content">
-      <img src="<%- user?.avatar ? 'uploads/'+user.avatar : 'img/default-avatar.jpg' %>" alt="" />
+      <img src="uploads/<%- user.avatar || defaultAvatar %>" alt="" />
       <div class="details">
         <span><%- user.name %></span>
         <p>Online</p>
@@ -9,41 +9,55 @@
     </div>
     <a href="/logout" class="logout" onclick="return alert('Logged Out')">Logout</a>
   </header>
+
   <div class="search">
-    <span class="text">Select an user to start chat</span>
-    <input type="text" placeholder="Enter name to search..." />
-    <button><i class="fas fa-search"></i></button>
+    <span class="text">Chatting with</span>
+    <!-- <input type="text" placeholder="Enter name to search..." />
+    <button><i class="fas fa-search"></i></button> -->
+  </div>
+  <div class="users-list has-chat">
+    <% if (chats.hasChat.length == 0) { %>
+    <i>You haven't chatted with anyone yet</i>
+    <% } else { %>
+    <!-- else -->
+    <% chats.hasChat.forEach(chat => { %>
+    <a href="/chat/<%= chat.room_name %>" target="_blank">
+      <div class="content">
+        <img src="uploads/<%= chat.user_avatar || defaultAvatar %>" alt="" />
+        <div class="details">
+          <span><%= chat.user_name %></span>
+          <p><%= chat.latest_sender_id == user.id ? 'You: ' : '' %><%= chat.latest_message %></p>
+        </div>
+      </div>
+      <div class="status-dot"><i class="fas fa-circle"></i></div>
+    </a>
+    <% }) %>
+    <!-- else close -->
+    <% } %>
+  </div>
+
+  <div class="search">
+    <span class="text">Select user to start chat</span>
   </div>
   <div class="users-list">
-    <a href="">
+    <!-- if -->
+    <% if (chats.hasNoChat.length == 0) { %>
+    <i>There is no other user yet</i>
+    <% } else { %>
+    <!-- else -->
+    <% chats.hasNoChat.forEach(user => { %>
+    <a href="/chat/new">
       <div class="content">
-        <img src="img/images.jpeg" alt="" />
+        <img src="uploads/<%= user.avatar || defaultAvatar %>" alt="" />
         <div class="details">
-          <span>Baruak Tampan</span>
-          <p>test Message</p>
+          <span><%= user.name %></span>
         </div>
       </div>
       <div class="status-dot"><i class="fas fa-circle"></i></div>
     </a>
-    <a href="">
-      <div class="content">
-        <img src="img/images.jpeg" alt="" />
-        <div class="details">
-          <span>Baruak Tampan</span>
-          <p>test Message</p>
-        </div>
-      </div>
-      <div class="status-dot"><i class="fas fa-circle"></i></div> </a
-    ><a href="">
-      <div class="content">
-        <img src="img/images.jpeg" alt="" />
-        <div class="details">
-          <span>Baruak Tampan</span>
-          <p>test Message</p>
-        </div>
-      </div>
-      <div class="status-dot"><i class="fas fa-circle"></i></div>
-    </a>
+    <% }) %>
+    <!-- else close -->
+    <% } %>
   </div>
 </section>
 <script src="js/user.js"></script>

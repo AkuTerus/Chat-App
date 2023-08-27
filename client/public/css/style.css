@@ -181,7 +181,7 @@ form .name-details .field:last-child {
 }
 
 .users .search {
-  margin: 20px 0;
+  margin: 20px 0 5px;
   display: flex;
   position: relative;
   align-items: center;
