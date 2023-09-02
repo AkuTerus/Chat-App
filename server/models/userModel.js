@@ -10,29 +10,29 @@ export async function getUserByEmail(email) {
 
 export async function getHasChat(userId) {
   const query = `
-    SELECT DISTINCT
+    SELECT
       r.id AS room_id, r.name AS room_name,
       u.id AS user_id, u.name AS user_name, u.avatar AS user_avatar,
       m.message AS latest_message, m.sender_id AS latest_sender_id, m.sent_at AS latest_sent_at
     FROM rooms r
     INNER JOIN participants p ON r.id = p.room_id
     INNER JOIN users u ON u.id = p.user_id
-    INNER JOIN (
+    LEFT JOIN (
       SELECT room_id, MAX(id) latest_id
       FROM messages
       GROUP BY room_id
     ) latest_msg ON latest_msg.room_id = r.id
-    INNER JOIN
+    LEFT JOIN
       messages m ON m.room_id = r.id AND m.id = latest_msg.latest_id
     WHERE
       p.room_id IN (
         SELECT room_id FROM participants WHERE user_id = :userId
       )
       AND p.user_id != :userId
+    ORDER BY latest_sent_at DESC
     ;
   `;
   const [get, field] = await db.execute(query, { userId });
-  console.log(get, field);
   return get;
 }
 
