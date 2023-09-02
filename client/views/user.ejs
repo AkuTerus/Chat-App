@@ -1,7 +1,7 @@
 <section class="users">
   <header>
     <div class="content">
-      <img src="uploads/<%- user.avatar %>" alt="" />
+      <img src="/uploads/<%- user.avatar %>" alt="" />
       <div class="details">
         <span><%- user.name %></span>
         <p>Online</p>
@@ -23,7 +23,7 @@
     <% chats.hasChat.forEach(chat => { %>
     <a href="/chat/<%= chat.room_name %>" target="_blank">
       <div class="content">
-        <img src="uploads/<%= chat.user_avatar %>" alt="" />
+        <img src="/uploads/<%= chat.user_avatar %>" alt="" />
         <div class="details">
           <span><%= chat.user_name %></span>
           <p><%= chat.latest_sender_id == user.id ? 'You: ' : '' %><%= chat.latest_message %></p>
@@ -48,7 +48,7 @@
     <% chats.hasNoChat.forEach(user => { %>
     <a data-userid="<%= user.id %>">
       <div class="content">
-        <img src="uploads/<%= user.avatar %>" alt="" />
+        <img src="/uploads/<%= user.avatar %>" alt="" />
         <div class="details">
           <span><%= user.name %></span>
         </div>
@@ -89,4 +89,4 @@
     return res;
   }
 </script>
-<script defer src="js/user.js"></script>
+<script defer src="/js/user.js"></script>
