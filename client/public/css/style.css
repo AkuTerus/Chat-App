@@ -136,14 +136,6 @@ form .name-details .field:last-child {
   padding: 25px 30px;
 }
 
-.users header,
-.users-list a {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid #e6e6e6;
-}
-
 .wrapper img {
   object-fit: cover;
   border-radius: 50%;
@@ -233,6 +225,26 @@ form .name-details .field:last-child {
   content: '\f00d';
 }
 
+.users header,
+.users-list a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #e6e6e6;
+  border-radius: 5px;
+}
+
+.users-list a:hover {
+  cursor: pointer;
+  background-color: #f0f0f0;
+  transition: ease-out 0.2s;
+}
+
+.users-list a:active {
+  background-color: #d0d0d0;
+  transition: ease-out 0.2s;
+}
+
 .users-list {
   max-height: 350px;
   overflow-y: auto;
@@ -252,7 +264,8 @@ form .name-details .field:last-child {
 }
 
 .users-list a {
-  margin-bottom: 15px;
+  /* margin-bottom: 15px; */
+  padding: 8px;
   page-break-after: 15px;
   padding-right: 15px;
   border-bottom-color: #f1f1f1;
