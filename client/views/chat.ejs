@@ -1,55 +1,32 @@
 <section class="chat-area">
   <header>
     <a href="" class="back-icon"><i class="fas fa-arrow-left"></i></a>
-    <img src="/img/images.jpeg" alt="" />
+    <img src="/uploads/<%= partner.avatar %>" alt="" />
     <div class="details">
-      <span>Baruak Tampan</span>
+      <span><%= partner.name %></span>
       <p>Online</p>
     </div>
   </header>
   <div class="chat-box">
+    <% messages.forEach(msg => { %>
+    <!--  -->
+    <% if (msg.sender_id == user.id) { %>
     <div class="chat outgoing">
       <div class="details">
-        <p>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit.Lorem ipsum dolor, sit amet
-          consectetur adipisicing elit.
-        </p>
+        <p><%= msg.message %></p>
       </div>
     </div>
+    <!--  -->
+    <% } else { %>
     <div class="chat incoming">
-      <img src="/img/images.jpeg" alt="" />
+      <img src="/uploads/<%= partner.avatar %>" alt="" />
       <div class="details">
-        <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit.</p>
+        <p><%= msg.message %></p>
       </div>
     </div>
-    <div class="chat outgoing">
-      <div class="details">
-        <p>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit.Lorem ipsum dolor, sit amet
-          consectetur adipisicing elit.
-        </p>
-      </div>
-    </div>
-    <div class="chat incoming">
-      <img src="/img/images.jpeg" alt="" />
-      <div class="details">
-        <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit.</p>
-      </div>
-    </div>
-    <div class="chat outgoing">
-      <div class="details">
-        <p>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit.Lorem ipsum dolor, sit amet
-          consectetur adipisicing elit.
-        </p>
-      </div>
-    </div>
-    <div class="chat incoming">
-      <img src="/img/images.jpeg" alt="" />
-      <div class="details">
-        <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit.</p>
-      </div>
-    </div>
+    <% } %>
+    <!--  -->
+    <% }) %>
   </div>
   <form action="#" class="typing-area">
     <input type="text" placeholder="Type a message here..." />
