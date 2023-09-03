@@ -27,7 +27,9 @@ router.post(
     async (req, res, next) => {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        await fs.unlink(req.file.path); // remove previously uploaded file
+        if (req.file) { // if chose file (uploaded)
+          await fs.unlink(req.file.path); // remove previously uploaded file
+        }
         req.flash('validation_errors', errors.array());
         return res.redirect(req.originalUrl);
       }
