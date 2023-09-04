@@ -1,6 +1,8 @@
 <section class="chat-area">
   <header>
-    <a href="" class="back-icon"><img src="/img/arrow-left-solid.svg" alt=""></i></a>
+    <a href="" class="back-icon">
+      <img src="/img/arrow-left-solid.svg" alt="" />
+    </a>
     <!-- <a href="" class="back-icon"><i class="fas fa-arrow-left"></i></a> -->
     <img src="/uploads/<%= partner.avatar %>" alt="" />
     <div class="details">
@@ -32,26 +34,40 @@
   <input type="hidden" id="__roomid" value="<%= room.id %>" />
   <div class="typing-area">
     <input id="message" type="text" placeholder="Type a message here..." />
-    <button><img src="/img/telegram.svg" alt=""></button>
+    <button type="button" id="send_message">
+      <img src="/img/telegram.svg" alt="" />
+    </button>
   </div>
 </section>
 <script>
+  const chatBox = document.querySelector(`.chat-box`);
   const roomid = document.querySelector(`#__roomid`);
   const message = document.querySelector(`#message`);
   const sendMessageButton = document.querySelector(`#send_message`);
 
+  // auto scroll to scrollHeight
+  chatBox.scroll(0, chatBox.scrollHeight);
+
   // onclick sendMessageButton
   (async () => {
     sendMessageButton.addEventListener('click', async (e) => {
-      if (message.value) {
-        const newMessage = await postMessage(roomid.value, message.value);
-        console.log(newMessage);
-        window.location.reload();
+      await doPostMessage(roomid.value, message.value);
+    });
+    message.addEventListener('keypress', async (e) => {
+      if (e.key == 'Enter') {
+        await doPostMessage(roomid.value, message.value);
       }
     });
 
+    async function doPostMessage(roomid, message) {
+      if (message) {
+        const newMessage = await postMessage(roomid, message);
+        window.location.reload();
+      }
+    }
+
     async function postMessage(roomid, message) {
-      const doPostMessage = await fetch(`/chat/message`, {
+      const fetchPostMessage = await fetch(`/chat/message`, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -61,7 +77,7 @@
           message: message,
         }),
       });
-      const res = await doPostMessage.json();
+      const res = await fetchPostMessage.json();
       return res;
     }
   })();
