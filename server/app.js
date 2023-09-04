@@ -1,4 +1,5 @@
 /* core modules */
+import http from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomBytes } from 'node:crypto';
@@ -20,7 +21,7 @@ import cookieParser from 'cookie-parser';
 
 /* declaration */
 const app = express();
-const PORT = 3000;
+const port = 3000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -54,6 +55,7 @@ app.set('layout extractScripts', true);
 /* first middleware for logging, etc */
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path} -- `, new Date().toLocaleString());
+  console.log(`req.session.token = ${req.session.token}`);
   next();
 });
 
@@ -70,10 +72,14 @@ app.use('/user', accessibleOnLogin, userRouter);
 app.use('/chat', accessibleOnLogin, chatRouter);
 
 /* 404 routing handler */
-/* 404 routing handler */
-app.use((req, res, next) => {
+app.use('*', (req, res, next) => {
   res.status(404).send('<h1>404 Not Found</h1>');
 });
 
-/* express app listener */
-app.listen(PORT, () => console.log(`server running at http://localhost:${PORT} ...`));
+const server = http.createServer(app);
+
+server.listen(port);
+/** Event listener for HTTP server "listening" event. */
+server.on('listening', () => {
+  console.log(`Server listening on http://localhost:${port}/`);
+});
