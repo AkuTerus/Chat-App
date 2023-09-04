@@ -63,11 +63,20 @@ form .name-details .field:last-child {
   margin-left: 10px;
 }
 
-.form form .field {
+.form form .field{
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.form form .field i img{
+  width: 20px;
+  height: 20px;
   display: flex;
   position: relative;
   flex-direction: column;
-  margin-bottom: 10px;
+  
 }
 
 .form form .field label {
@@ -112,10 +121,16 @@ form .name-details .field:last-child {
   cursor: pointer;
 }
 
-.form form .field i.active::before {
-  content: '\f070';
+.form form .field i img.active::before {
+  z-index: 1;
+  content: url(/img/eye-slash-solid.svg);
   color: #333;
 }
+
+/* .form form .field i.active::before {
+  content: url(/img/eye-slash-solid.svg);
+  color: #333;
+} */
 
 .form .link {
   text-align: center;
@@ -288,10 +303,14 @@ form .name-details .field:last-child {
   padding: 18px 30px;
 }
 
-.chat-area header .back-icon {
-  font-size: 18px;
+.chat-area header .back-icon img{
+  width: 24px;
+  height: 24px;
   color: #333;
+  margin-top: 10px;
+  margin-left: -5px;
 }
+
 
 .chat-area header img {
   height: 45px;
@@ -377,9 +396,17 @@ form .name-details .field:last-child {
   width: 55px;
   border: none;
   outline: none;
-  background: #333;
+  background-color: #fff;
   color: #fff;
   font-size: 19px;
   cursor: pointer;
-  border-radius: 0 5px 5px 0;
+}
+
+.typing-area button img{
+  width: 40px;
+  height: 40px;
+  color: #fff;
+  display: flex;
+  align-items: end;
+  margin-left: 6px;
 }

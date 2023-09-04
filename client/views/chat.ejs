@@ -1,6 +1,7 @@
 <section class="chat-area">
   <header>
-    <a href="" class="back-icon"><i class="fas fa-arrow-left"></i></a>
+    <a href="" class="back-icon"><img src="/img/arrow-left-solid.svg" alt=""></i></a>
+    <!-- <a href="" class="back-icon"><i class="fas fa-arrow-left"></i></a> -->
     <img src="/uploads/<%= partner.avatar %>" alt="" />
     <div class="details">
       <span><%= partner.name %></span>
@@ -31,9 +32,7 @@
   <input type="hidden" id="__roomid" value="<%= room.id %>" />
   <div class="typing-area">
     <input id="message" type="text" placeholder="Type a message here..." />
-    <button type="button" id="send_message">
-      <i class="fa-solid fa-paper-plane"></i>
-    </button>
+    <button><img src="/img/telegram.svg" alt=""></button>
   </div>
 </section>
 <script>
