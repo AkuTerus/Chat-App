@@ -21,7 +21,7 @@
     <% } else { %>
     <!-- else -->
     <% chats.hasChat.forEach(chat => { %>
-    <a href="/chat/<%= chat.room_name %>" target="_blank">
+    <a href="/chat/<%= chat.room_id %>">
       <div class="content">
         <img src="/uploads/<%= chat.user_avatar %>" alt="" />
         <div class="details">
@@ -62,31 +62,34 @@
 </section>
 <script>
   const useridElems = document.querySelectorAll(`a[data-userid]`);
-  useridElems.forEach((useridElem) =>
-    useridElem.addEventListener(`click`, async (e) => {
-      const partnerid = useridElem.dataset.userid;
-      const res = await createRoom(partnerid);
 
-      if (res.code != 200) {
-        return alert(res.msg);
-      }
-      const chatUrl = `/chat/${res.roomName}`;
-      window.open(chatUrl);
-    })
-  );
+  (async () => {
+    useridElems.forEach((useridElem) =>
+      useridElem.addEventListener(`click`, async (e) => {
+        const partnerid = useridElem.dataset.userid;
+        const res = await createRoom(partnerid);
 
-  async function createRoom(partnerid) {
-    const doCreateRoom = await fetch(`/chat/room`, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'POST',
-      body: JSON.stringify({
-        partnerid: partnerid,
-      }),
-    });
-    const res = await doCreateRoom.json();
-    return res;
-  }
+        if (res.code != 200) {
+          return alert(res.msg);
+        }
+        const chatUrl = `/chat/${res.roomid}`;
+        window.open(chatUrl);
+      })
+    );
+
+    async function createRoom(partnerid) {
+      const doCreateRoom = await fetch(`/chat/room`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        body: JSON.stringify({
+          partnerid: partnerid,
+        }),
+      });
+      const res = await doCreateRoom.json();
+      return res;
+    }
+  })();
 </script>
 <script defer src="/js/user.js"></script>

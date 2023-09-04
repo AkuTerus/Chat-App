@@ -28,8 +28,42 @@
     <!--  -->
     <% }) %>
   </div>
-  <form action="#" class="typing-area">
-    <input type="text" placeholder="Type a message here..." />
-    <button><i class="fa-solid fa-paper-plane"></i></button>
-  </form>
+  <input type="hidden" id="__roomid" value="<%= room.id %>" />
+  <div class="typing-area">
+    <input id="message" type="text" placeholder="Type a message here..." />
+    <button type="button" id="send_message">
+      <i class="fa-solid fa-paper-plane"></i>
+    </button>
+  </div>
 </section>
+<script>
+  const roomid = document.querySelector(`#__roomid`);
+  const message = document.querySelector(`#message`);
+  const sendMessageButton = document.querySelector(`#send_message`);
+
+  // onclick sendMessageButton
+  (async () => {
+    sendMessageButton.addEventListener('click', async (e) => {
+      if (message.value) {
+        const newMessage = await postMessage(roomid.value, message.value);
+        console.log(newMessage);
+        window.location.reload();
+      }
+    });
+
+    async function postMessage(roomid, message) {
+      const doPostMessage = await fetch(`/chat/message`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        body: JSON.stringify({
+          roomid: roomid,
+          message: message,
+        }),
+      });
+      const res = await doPostMessage.json();
+      return res;
+    }
+  })();
+</script>

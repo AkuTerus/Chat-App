@@ -13,65 +13,52 @@ export async function getUserByToken(token) {
   return user;
 }
 
-async function getPartnerById(id) {
+export async function getPartnerById(id) {
   const query = `SELECT * FROM users WHERE id = ?`;
   const [[partner]] = await db.execute(query, [id]);
   return partner;
 }
 
 // export
-export async function createRoom(token, partnerid) {
-  if (!token || !partnerid) {
-    return {
-      code: 403,
-      message: 'Invalid Format',
-    };
-  }
-
-  const user = await getUserByToken(token);
-  if (!user) {
-    return {
-      code: 403,
-      message: 'Unauthorized user to perform action',
-    };
-  }
-  console.log(`user.id: ${user.id}`);
-
-  const partner = await getPartnerById(partnerid);
-  if (!partner) {
-    return {
-      code: 403,
-      message: 'Unkown partner user',
-    };
-  }
-  console.log(`partnerid: ${partnerid}`);
-
+export async function createRoom(userid, partnerid) {
   const roomName = randomBytes(16).toString('hex');
 
   const query = `INSERT INTO rooms (name, type) VALUES (?, ?)`;
   const [room] = await db.execute(query, [roomName, 1]);
   const roomid = room.insertId;
-  console.log(`roomid: ${roomid}`);
 
   const queryParticipant = `INSERT INTO participants (room_id,user_id) VALUES (?,?)`;
-  const insertUser1 = await db.execute(queryParticipant, [roomid, user.id]);
+  const insertUser1 = await db.execute(queryParticipant, [roomid, userid]);
   const insertUser2 = await db.execute(queryParticipant, [roomid, partnerid]);
 
   return {
     code: 200,
     message: 'Room created succesfully',
-    roomName: roomName,
+    roomid: roomid,
   };
 }
 
-export async function getRoomByName(name) {
-  const query = `SELECT * FROM rooms WHERE name = ?`;
-  const [[room]] = await db.execute(query, [name]);
+export async function getRoomById(roomid) {
+  const query = `SELECT * FROM rooms WHERE id = ?`;
+  const [[room]] = await db.execute(query, [roomid]);
   return room;
 }
 
+export async function getUserByRoomId(roomid, userid) {
+  const query = `
+    SELECT u.id, u.name, u.avatar
+    FROM users u
+    INNER JOIN participants p ON p.user_id = u.id
+    INNER JOIN rooms r ON r.id = p.room_id
+    WHERE r.id = ? AND u.id = ?
+  `;
+
+  const [[user]] = await db.execute(query, [roomid, userid]);
+  return user;
+}
+
 // export
-export async function getPartnerByRoomId(roomid, userid) {
+export async function getPartnerByRoomId(roomid, partnerid) {
   const query = `
     SELECT u.id, u.name, u.avatar
     FROM users u
@@ -80,7 +67,7 @@ export async function getPartnerByRoomId(roomid, userid) {
     WHERE r.id = ? AND u.id != ?
   `;
 
-  const [[partner]] = await db.execute(query, [roomid, userid]);
+  const [[partner]] = await db.execute(query, [roomid, partnerid]);
   return partner;
 }
 
@@ -96,4 +83,18 @@ export async function getMessagesByRoomId(roomid) {
 
   const [messages] = await db.execute(query, [roomid]);
   return messages;
+}
+
+export async function createMessage(roomid, userid, message) {
+  const query = `
+    INSERT INTO messages (room_id, sender_id, message)
+    VALUES (?,?,?)
+  `;
+
+  const [_insertMessage] = await db.execute(query, [roomid, userid, message]);
+  const { insertId } = _insertMessage;
+
+  const queryGet = `SELECT * FROM messages WHERE id = ?`;
+  const [[_message]] = await db.execute(queryGet, [insertId]);
+  return _message;
 }
