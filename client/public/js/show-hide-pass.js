@@ -1,5 +1,5 @@
 const passwordField = document.querySelector('.form .field input[type="password"]'),
-  toggleBtn = document.querySelector('.form .field i');
+  toggleBtn = document.querySelector('.form .field i img');
 
 toggleBtn.onclick = () => {
   if (passwordField.type == 'password') {
