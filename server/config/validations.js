@@ -1,6 +1,6 @@
 import bcryptjs from 'bcryptjs';
-import { isNewEmail } from '../models/registerModel.js';
-import { getUserByEmail } from '../models/loginModel.js';
+import registerModel from '../models/registerModel.js';
+import loginModel from '../models/loginModel.js';
 
 export const loginSchemas = {
   email: {
@@ -8,7 +8,7 @@ export const loginSchemas = {
     isEmail: { errorMessage: 'Invalid Email format', bail: true },
     _isEmailExist: {
       custom: async (value, { req }) => {
-        const user = await getUserByEmail(value);
+        const user = await loginModel.getUserByEmail(value);
         if (!user || (user && !bcryptjs.compareSync(req.body.password, user?.password))) {
           throw new Error('Unauthorized User to Login');
         }
@@ -53,7 +53,7 @@ export const registerSchemas = {
     isEmail: { errorMessage: 'Invalid Email format' },
     _isNewEmail: {
       custom: async (value, { req }) => {
-        const checkIsNewEmail = await isNewEmail(value);
+        const checkIsNewEmail = await registerModel.isNewEmail(value);
         if (!checkIsNewEmail) {
           throw new Error('Email is already registered');
         }

@@ -1,15 +1,15 @@
 import express from 'express';
-import { getHasChat, getHasNoChat, getUserByEmail } from '../models/userModel.js';
+import userModel from '../models/userModel.js';
 
 const router = express.Router();
 
 router.get('/', async (req, res) => {
   // user data
-  const user = await getUserByEmail(req.session.userEmail);
+  const user = await userModel.getUserByEmail(req.session.userEmail);
 
   // query get data has chat and no chat
-  const hasChat = await getHasChat(user.id);
-  const hasNoChat = await getHasNoChat(user.id);
+  const hasChat = await userModel.getHasChat(user.id);
+  const hasNoChat = await userModel.getHasNoChat(user.id);
 
   res.render('user', {
     title: 'User',

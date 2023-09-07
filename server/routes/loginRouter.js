@@ -1,7 +1,7 @@
 import express from 'express';
 import { checkSchema, matchedData, validationResult } from 'express-validator';
 import { loginSchemas } from '../config/validations.js';
-import { insertLoginDetails } from '../models/loginModel.js';
+import loginModel from '../models/loginModel.js';
 import { createTokenOnSuccessLogin } from '../middlewares/loginAuth.js';
 
 const router = express.Router();
@@ -33,7 +33,7 @@ router.post(
     // login success
     // insert login_details
     const data = [req.body.email, req.session.token, req.ip];
-    const insert = await insertLoginDetails(data);
+    const insert = await loginModel.insertLoginDetails(data);
 
     res.redirect('/');
   }

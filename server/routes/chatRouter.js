@@ -1,26 +1,17 @@
 import express from 'express';
-import {
-  createRoom,
-  getRoomById,
-  getUserByRoomId,
-  getUserByToken,
-  getPartnerById,
-  getMessagesByRoomId,
-  getPartnerByRoomId,
-  createMessage,
-} from '../models/chatModel.js';
+import chatModel from '../models/chatModel.js';
 
 const router = express.Router();
 
 router.get('/:roomid', async (req, res) => {
-  const room = await getRoomById(req.params.roomid);
+  const room = await chatModel.getRoomById(req.params.roomid);
   if (!room) {
     res.sendStatus(403);
   }
 
-  const user = await getUserByToken(req.session.token);
-  const partner = await getPartnerByRoomId(room.id, user.id);
-  const messages = await getMessagesByRoomId(room.id);
+  const user = await chatModel.getUserByToken(req.session.token);
+  const partner = await chatModel.getPartnerByRoomId(room.id, user.id);
+  const messages = await chatModel.getMessagesByRoomId(room.id);
   console.log(messages);
   res.render('chat', {
     title: 'Chat',
@@ -40,7 +31,7 @@ router.post('/room', async (req, res) => {
     };
   }
 
-  const user = await getUserByToken(req.session.token);
+  const user = await chatModel.getUserByToken(req.session.token);
   if (!user) {
     return {
       code: 403,
@@ -48,7 +39,7 @@ router.post('/room', async (req, res) => {
     };
   }
 
-  const partner = await getPartnerById(partnerid);
+  const partner = await chatModel.getPartnerById(partnerid);
   if (!partner) {
     return {
       code: 403,
@@ -56,7 +47,7 @@ router.post('/room', async (req, res) => {
     };
   }
 
-  const createRoomRes = await createRoom(user.id, partner.id);
+  const createRoomRes = await chatModel.createRoom(user.id, partner.id);
   res.status(200).json(createRoomRes);
 });
 
@@ -69,7 +60,7 @@ router.post('/message', async (req, res) => {
     };
   }
 
-  const user = await getUserByToken(req.session.token);
+  const user = await chatModel.getUserByToken(req.session.token);
   if (!user) {
     return {
       code: 403,
@@ -77,7 +68,7 @@ router.post('/message', async (req, res) => {
     };
   }
 
-  const isUserValidRoom = await getUserByRoomId(roomid, user.id);
+  const isUserValidRoom = await chatModel.getUserByRoomId(roomid, user.id);
   if (!isUserValidRoom) {
     return {
       code: 403,
@@ -85,7 +76,7 @@ router.post('/message', async (req, res) => {
     };
   }
 
-  const createMessageRes = await createMessage(roomid, user.id, message);
+  const createMessageRes = await chatModel.createMessage(roomid, user.id, message);
   res.status(200).json(createMessageRes);
 });
 
