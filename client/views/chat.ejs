@@ -32,6 +32,7 @@
     <% }) %>
   </div>
   <input type="hidden" id="__roomid" value="<%= room.id %>" />
+  <input type="hidden" id="__last_message_id" value="<%= messages.at(-1).id %>" />
   <div class="typing-area">
     <input id="message" type="text" placeholder="Type a message here..." />
     <button type="button" id="send_message">
@@ -42,7 +43,8 @@
 <script>
   const chatBox = document.querySelector(`.chat-box`);
   const roomid = document.querySelector(`#__roomid`);
-  const message = document.querySelector(`#message`);
+  const lastMessageId = document.querySelector(`#__last_message_id`);
+  const messageInput = document.querySelector(`#message`);
   const sendMessageButton = document.querySelector(`#send_message`);
 
   // auto scroll to scrollHeight
@@ -51,18 +53,21 @@
   // onclick sendMessageButton
   (async () => {
     sendMessageButton.addEventListener('click', async (e) => {
-      await doPostMessage(roomid.value, message.value);
+      await doPostMessage(roomid.value, messageInput.value);
+      updateChat();
     });
-    message.addEventListener('keypress', async (e) => {
-      if (e.key == 'Enter') {
-        await doPostMessage(roomid.value, message.value);
-      }
+    messageInput.addEventListener('keypress', async (e) => {
+      if (e.key != 'Enter') return;
+      await doPostMessage(roomid.value, messageInput.value);
+      updateChat();
     });
 
     async function doPostMessage(roomid, message) {
       if (message) {
         const newMessage = await postMessage(roomid, message);
-        window.location.reload();
+        console.log('masuk message');
+        messageInput.value = '';
+        // window.location.reload();
       }
     }
 
@@ -79,6 +84,48 @@
       });
       const res = await fetchPostMessage.json();
       return res;
+    }
+
+    async function getLatestMessage(roomid, lastMessageId) {
+      const fetchPostMessage = await fetch(`/chat/${roomid}/latestMessage/${lastMessageId}`);
+      const res = await fetchPostMessage.json();
+      return res;
+    }
+
+    function buildChatElement(messages) {
+      const userid = Number('<%= user.id %>');
+      const chatElement = messages.reduce((str, msg) => {
+        if (msg.sender_id == userid) {
+          return (
+            str +
+            `<div class="chat outgoing">
+              <div class="details">
+                <p>${msg.message}</p>
+              </div>
+            </div>`
+          );
+        } else {
+          return (
+            str +
+            `<div class="chat incoming">
+              <img src="/uploads/<%= partner.avatar %>" alt="" />
+              <div class="details">
+                <p>${msg.message}</p>
+              </div>
+            </div>`
+          );
+        }
+      }, ``);
+      return chatElement;
+    }
+
+    async function updateChat() {
+      const latestMessages = await getLatestMessage(roomid.value, lastMessageId.value);
+      const chatElement = buildChatElement(latestMessages);
+      console.log(latestMessages);
+      console.log(chatElement);
+      chatBox.innerHTML += chatElement;
+      chatBox.scroll(0, chatBox.scrollHeight);
     }
   })();
 </script>

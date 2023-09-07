@@ -22,6 +22,19 @@ router.get('/:roomid', async (req, res) => {
   });
 });
 
+router.get('/:roomid/latestMessage/:lastMessageId', async (req, res) => {
+  const { roomid, lastMessageId } = req.params;
+  if (!req.session.token) {
+    return {
+      code: 403,
+      message: 'Unauthorized',
+    };
+  }
+
+  const latestMessage = await chatModel.getLatestMessageByLastMessageId(roomid, lastMessageId);
+  return res.status(200).json(latestMessage);
+});
+
 router.post('/room', async (req, res) => {
   const { partnerid } = req.body;
   if (!req.session.token || !partnerid) {

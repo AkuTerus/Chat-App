@@ -86,6 +86,20 @@ export default {
     return messages;
   },
 
+  async getLatestMessageByLastMessageId(roomid, lastMessageId) {
+    const query = `
+      SELECT 
+      m.id, m.sender_id, m.message, m.sent_at
+      FROM messages m
+      INNER JOIN rooms r ON r.id=m.room_id
+      WHERE r.id = ? AND m.id > ?
+      ORDER BY m.id
+    `;
+
+    const [messages] = await db.execute(query, [roomid, lastMessageId]);
+    return messages;
+  },
+
   async createMessage(roomid, userid, message) {
     const query = `
       INSERT INTO messages (room_id, sender_id, message)
