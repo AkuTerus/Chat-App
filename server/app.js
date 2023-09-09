@@ -9,6 +9,7 @@ import express from 'express';
 import expressEjsLayouts from 'express-ejs-layouts';
 import session from 'express-session';
 import flash from 'connect-flash';
+import { Server } from 'socket.io';
 
 /* router modules */
 import userRouter from './routes/userRouter.js';
@@ -18,6 +19,7 @@ import loginRouter from './routes/loginRouter.js';
 import logoutRouter from './routes/logoutRouter.js';
 import { accessibleOnLogin, accessibleOnLogout } from './middlewares/loginAuth.js';
 import cookieParser from 'cookie-parser';
+import EventListener from './utils/EventListener.js';
 
 /* declaration */
 const app = express();
@@ -76,10 +78,14 @@ app.use('*', (req, res, next) => {
   res.status(404).send('<h1>404 Not Found</h1>');
 });
 
-const server = http.createServer(app);
+const httpServer = http.createServer(app);
 
-server.listen(port);
-/** Event listener for HTTP server "listening" event. */
-server.on('listening', () => {
+const io = new Server(httpServer);
+io.listen(httpServer);
+io.on('connect', (socket) => new EventListener(io, socket));
+
+httpServer.listen(port);
+/** Event listener for HTTP httpServer "listening" event. */
+httpServer.on('listening', () => {
   console.log(`Server listening on http://localhost:${port}/`);
 });

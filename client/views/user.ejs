@@ -35,6 +35,7 @@
     <!-- else close -->
     <% } %>
   </div>
+  <input type="hidden" id="__userid" value="<%= user.id %>" />
 
   <div class="search">
     <span class="text">Select user to start chat</span>
@@ -62,6 +63,19 @@
 </section>
 <script>
   const useridElems = document.querySelectorAll(`a[data-userid]`);
+  const userid = Number(document.querySelector('#__userid').value);
+
+  (async () => {
+    const socket = io(location.origin);
+
+    socket.on('connect', () => {
+      socket.emit(':init', userid);
+    });
+
+    socket.once('user:online', (userId) => {
+      alert(`${userId} is online`);
+    });
+  })();
 
   (async () => {
     useridElems.forEach((useridElem) =>
