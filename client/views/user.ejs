@@ -62,25 +62,33 @@
   </div>
 </section>
 <script>
-  const useridElems = document.querySelectorAll(`a[data-userid]`);
-  const userid = Number(document.querySelector('#__userid').value);
+  const otherUsers = document.querySelectorAll(`a[data-userid]`);
+  const userId = Number('<%= user.id %>');
+  const userName = '<%= user.name %>';
 
   (async () => {
+    /*
+    |-----------------------------------------------------------------------------
+    | Socket
+    |-----------------------------------------------------------------------------
+    */
     const socket = io(location.origin);
 
-    socket.on('connect', () => {
-      socket.emit(':init', userid);
+    socket.emit('user:init', { userId, userName });
+
+    socket.once('user:online', (data) => {
+      console.log('on user:online');
+      console.log(`${data.userName} is online (logged in)`);
     });
 
-    socket.once('user:online', (userId) => {
-      alert(`${userId} is online`);
-    });
-  })();
-
-  (async () => {
-    useridElems.forEach((useridElem) =>
-      useridElem.addEventListener(`click`, async (e) => {
-        const partnerid = useridElem.dataset.userid;
+    /*
+    |-----------------------------------------------------------------------------
+    | Common
+    |-----------------------------------------------------------------------------
+    */
+    otherUsers.forEach((otherUser) =>
+      otherUser.addEventListener(`click`, async (e) => {
+        const partnerid = otherUser.dataset.userid;
         const res = await createRoom(partnerid);
 
         if (res.code != 200) {
