@@ -32,6 +32,7 @@
     <% }) %>
   </div>
   <input type="hidden" id="__roomid" value="<%= room.id %>" />
+  <input type="hidden" id="__partnerid" value="<%= partner.id %>" />
   <input
     type="hidden"
     id="__last_message_id"
@@ -47,6 +48,7 @@
 <script>
   const chatBox = document.querySelector(`.chat-box`);
   const roomid = document.querySelector(`#__roomid`);
+  const partnerid = document.querySelector(`#__partnerid`);
   const lastMessageId = document.querySelector(`#__last_message_id`);
   const messageInput = document.querySelector(`#message`);
   const sendMessageButton = document.querySelector(`#send_message`);
@@ -54,8 +56,22 @@
   // auto scroll to scrollHeight
   chatBox.scroll(0, chatBox.scrollHeight);
 
-  // onclick sendMessageButton
   (async () => {
+    /*
+    |-----------------------------------------------------------------------------
+    | Socket
+    |-----------------------------------------------------------------------------
+    */
+    const socket = io(location.origin);
+    const r = 'room_' + roomid;
+
+    socket.emit('chat:init', { r: r });
+
+    socket.on('chat:new_message', (data) => {
+      console.log('chat:new_message');
+      updateChat();
+    });
+
     sendMessageButton.addEventListener('click', async (e) => {
       await doPostMessage(roomid.value, messageInput.value);
       updateChat();
@@ -69,8 +85,14 @@
     async function doPostMessage(roomid, message) {
       if (message) {
         const newMessage = await postMessage(roomid, message);
-        console.log('masuk message');
         messageInput.value = '';
+        console.log('masuk message');
+
+        socket.emit('chat:send_message', {
+          roomid: Number(roomid),
+          partnerid: Number(partnerid.value),
+          r: r,
+        });
       }
     }
 

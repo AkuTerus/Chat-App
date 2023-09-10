@@ -12,7 +12,7 @@ router.get('/:roomid', async (req, res) => {
   const user = await chatModel.getUserByToken(req.session.token);
   const partner = await chatModel.getPartnerByRoomId(room.id, user.id);
   const messages = await chatModel.getMessagesByRoomId(room.id);
-  console.log(messages);
+  // console.log(messages);
   res.render('chat', {
     title: 'Chat',
     room: room,

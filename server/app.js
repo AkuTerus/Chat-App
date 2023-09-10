@@ -19,7 +19,7 @@ import loginRouter from './routes/loginRouter.js';
 import logoutRouter from './routes/logoutRouter.js';
 import { accessibleOnLogin, accessibleOnLogout } from './middlewares/loginAuth.js';
 import cookieParser from 'cookie-parser';
-import EventListener from './utils/EventListener.js';
+import Ws from './utils/Ws.js';
 
 /* declaration */
 const app = express();
@@ -80,12 +80,10 @@ app.use('*', (req, res, next) => {
 
 const httpServer = http.createServer(app);
 
-const io = new Server(httpServer);
-io.listen(httpServer);
-io.on('connect', (socket) => new EventListener(io, socket));
+global.io = new Server(httpServer);
+global.io.on('connect', (socket) => Ws.connect(socket));
 
 httpServer.listen(port);
-/** Event listener for HTTP httpServer "listening" event. */
 httpServer.on('listening', () => {
   console.log(`Server listening on http://localhost:${port}/`);
 });
