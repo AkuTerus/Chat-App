@@ -6,3 +6,6 @@
 //   searchBar.focus();
 //   searchBtn.classList.toggle('active');
 // };
+
+
+// Offline circle status change colors

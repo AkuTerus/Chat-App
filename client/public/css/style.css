@@ -275,8 +275,10 @@ form .name-details .field:last-child {
 }
 
 .users-list a .status-dot {
-  font-size: 12px;
-  color: #468669;
+  height: 12px;
+  width: 12px;
+  filter: invert(47%) sepia(8%) saturate(1939%) hue-rotate(101deg) brightness(95%) contrast(86%)
+  /* color: #468669; */
 }
 
 /* Offstatus */
