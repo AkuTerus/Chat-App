@@ -21,7 +21,7 @@
     <% } else { %>
     <!-- else -->
     <% chats.hasChat.forEach(chat => { %>
-    <a href="/chat/<%= chat.room_id %>">
+    <a href="/chat/<%= chat.room_id %>" data-roomid="<%= chat.room_id %>">
       <div class="content">
         <img src="/uploads/<%= chat.user_avatar %>" alt="" />
         <div class="details">
@@ -35,7 +35,6 @@
     <!-- else close -->
     <% } %>
   </div>
-  <input type="hidden" id="__userid" value="<%= user.id %>" />
 
   <div class="search">
     <span class="text">Select user to start chat</span>
@@ -61,10 +60,19 @@
     <% } %>
   </div>
 </section>
+<input type="hidden" id="__userid" value="<%= user.id %>" />
 <script>
   const otherUsers = document.querySelectorAll(`a[data-userid]`);
-  const userId = Number('<%= user.id %>');
-  const userName = '<%= user.name %>';
+  const roomElems = document.querySelectorAll(`a[data-roomid]`);
+  let userId = Number('<%= user.id %>');
+  let userName = '<%= user.name %>';
+
+  function getRoomIdsFromRoomElems(roomElems) {
+    return [...roomElems].reduce((arr, e) => {
+      arr.push(Number(e.dataset.roomid));
+      return arr;
+    }, []);
+  }
 
   (async () => {
     /*
@@ -74,11 +82,33 @@
     */
     const socket = io(location.origin);
 
-    socket.emit('user:init', { userId, userName });
+    socket.on('connect', () => {
+      let socketRooms = getRoomIdsFromRoomElems(roomElems).map((id) => 'room_' + id);
+      socket.emit('__:init', { userId: userId, userName: userName });
+      socket.emit('__:user_init_rooms', { socketRooms });
+    });
 
-    socket.once('user:online', (data) => {
+    socket.on('user:online', (data) => {
       console.log('on user:online');
       console.log(`${data.userName} is online (logged in)`);
+    });
+
+    socket.on('user:offline', (data) => {
+      console.log(data);
+      console.log('on user:offline');
+      console.log(`${data.userName} is offline`);
+    });
+
+    socket.on('chat:new_message', (data) => {
+      console.log('on chat:new_message');
+      console.log(data);
+      let room = [...roomElems].find((e) => e.dataset.roomid == data.roomid);
+      if (room) {
+        const { sender_id, message } = data.newMessage;
+        const roomMessageElem = room.querySelector('.details p');
+        const newLatestMessage = (sender_id == userId ? 'You: ' : '') + message;
+        roomMessageElem.innerText = newLatestMessage;
+      }
     });
 
     /*

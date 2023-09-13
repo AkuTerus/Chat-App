@@ -57,7 +57,7 @@ app.set('layout extractScripts', true);
 /* first middleware for logging, etc */
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path} -- `, new Date().toLocaleString());
-  console.log(`req.session.token = ${req.session.token}`);
+  // console.log(`req.session.token = ${req.session.token}`);
   next();
 });
 

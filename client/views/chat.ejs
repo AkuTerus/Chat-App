@@ -7,7 +7,7 @@
     <img src="/uploads/<%= partner.avatar %>" alt="" />
     <div class="details">
       <span><%= partner.name %></span>
-      <p>Online</p>
+      <p id="participant-status" class="participant-status">Online</p>
     </div>
   </header>
   <div class="chat-box">
@@ -52,20 +52,36 @@
   const lastMessageId = document.querySelector(`#__last_message_id`);
   const messageInput = document.querySelector(`#message`);
   const sendMessageButton = document.querySelector(`#send_message`);
+  const participantStatus = document.querySelector(`#participant-status`);
 
   // auto scroll to scrollHeight
   chatBox.scroll(0, chatBox.scrollHeight);
 
   (async () => {
+    const userId = Number('<%= user.id %>');
+    const userName = '<%= user.name %>';
     /*
     |-----------------------------------------------------------------------------
     | Socket
     |-----------------------------------------------------------------------------
     */
     const socket = io(location.origin);
-    const r = 'room_' + roomid;
+    const socketRoom = 'room_' + roomid.value;
 
-    socket.emit('chat:init', { r: r });
+    socket.on('connect', () => {
+      socket.emit('__:init', { userId: userId, userName: userName });
+      socket.emit('chat:init', { socketRoom: socketRoom });
+    });
+
+    socket.on('user:online', (data) => {
+      console.log('on user:online');
+      participantStatus.innerText = 'Online';
+    });
+
+    socket.on('user:offline', (data) => {
+      console.log('on user:offline');
+      participantStatus.innerText = '';
+    });
 
     socket.on('chat:new_message', (data) => {
       console.log('chat:new_message');
@@ -73,12 +89,13 @@
     });
 
     sendMessageButton.addEventListener('click', async (e) => {
-      await doPostMessage(roomid.value, messageInput.value);
+      await doPostMessage(roomid.value, messageInput.value.trim());
       updateChat();
     });
+
     messageInput.addEventListener('keypress', async (e) => {
       if (e.key != 'Enter') return;
-      await doPostMessage(roomid.value, messageInput.value);
+      await doPostMessage(roomid.value, messageInput.value.trim());
       updateChat();
     });
 
@@ -91,7 +108,8 @@
         socket.emit('chat:send_message', {
           roomid: Number(roomid),
           partnerid: Number(partnerid.value),
-          r: r,
+          socketRoom: socketRoom,
+          newMessage: newMessage,
         });
       }
     }
