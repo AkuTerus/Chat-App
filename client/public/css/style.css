@@ -290,13 +290,13 @@ form .name-details .field:last-child {
 .users-list a .status-dot {
   height: 12px;
   width: 12px;
-  visibility: hidden;
-  transition: all 1s ease-in-out;
+  opacity: 0;
+  filter: invert(47%) sepia(8%) saturate(1939%) hue-rotate(101deg) brightness(95%) contrast(86%);
 }
 
 .users-list a .status-dot.online {
-  visibility: visible;
-  filter: invert(47%) sepia(8%) saturate(1939%) hue-rotate(101deg) brightness(95%) contrast(86%);
+  opacity: 1;
+  transition: all 0.75s ease-in-out;
   /* color: #468669; */
 }
 
