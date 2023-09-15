@@ -184,7 +184,7 @@ form .name-details .field:last-child {
 }
 
 .users .search .text {
-  font-size: 18px;
+  font-size: 16 px;
 }
 
 .users .search input {
@@ -217,16 +217,28 @@ form .name-details .field:last-child {
   font-size: 17px;
   border-radius: 0 5px 5px 0;
   transition: 0.3s ease;
+  /* display: flex;
+  align-items: center; */
 }
 
 .users .search button.active {
   color: #fff;
-  background: #333;
+  background: #c1c1c1;
 }
 
-.users .search button.active i::before {
-  content: '\f00d';
+.users .search button img{
+  width: 30x;
+  height: 25px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
+
+/* .users .search button.active img::before {
+  height: 10px;
+  width: 10px;
+  content: '\f00d';
+} */
 
 .users header,
 .users-list a {
