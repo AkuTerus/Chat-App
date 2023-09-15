@@ -226,7 +226,7 @@ form .name-details .field:last-child {
   background: #c1c1c1;
 }
 
-.users .search button img{
+.users .search button img {
   width: 30x;
   height: 25px;
   display: block;
@@ -286,16 +286,18 @@ form .name-details .field:last-child {
   border-bottom-color: #f1f1f1;
 }
 
+/* Offstatus */
 .users-list a .status-dot {
   height: 12px;
   width: 12px;
-  filter: invert(47%) sepia(8%) saturate(1939%) hue-rotate(101deg) brightness(95%) contrast(86%)
-  /* color: #468669; */
+  visibility: hidden;
+  transition: all 1s ease-in-out;
 }
 
-/* Offstatus */
-.users-list a .status-dot.offline {
-  color: #ccc;
+.users-list a .status-dot.online {
+  visibility: visible;
+  filter: invert(47%) sepia(8%) saturate(1939%) hue-rotate(101deg) brightness(95%) contrast(86%);
+  /* color: #468669; */
 }
 
 /* Chat Area CSS */
