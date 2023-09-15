@@ -37,6 +37,8 @@ class Ws {
     console.log(this.users);
 
     const userData = this.users.find((u) => u.userId == socket.userId && u.socketId == socket.id); // save user data for emitting
+    if (!userData) return;
+
     console.log('userData');
     console.log(userData);
 
