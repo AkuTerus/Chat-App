@@ -1,5 +1,5 @@
 import { createHash, randomBytes } from 'node:crypto';
-import db from '../config/database.js';
+import db from './../config/database.js';
 
 // export
 export function createTokenOnSuccessLogin(req, res, next) {

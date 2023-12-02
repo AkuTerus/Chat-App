@@ -10,16 +10,19 @@ import expressEjsLayouts from 'express-ejs-layouts';
 import session from 'express-session';
 import flash from 'connect-flash';
 import { Server } from 'socket.io';
+import cookieParser from 'cookie-parser';
+
+/* dotenv */
+import 'dotenv/config.js';
 
 /* router modules */
-import userRouter from './routes/userRouter.js';
-import chatRouter from './routes/chatRouter.js';
-import registerRouter from './routes/registerRouter.js';
-import loginRouter from './routes/loginRouter.js';
-import logoutRouter from './routes/logoutRouter.js';
-import { accessibleOnLogin, accessibleOnLogout } from './middlewares/loginAuth.js';
-import cookieParser from 'cookie-parser';
-import Ws from './utils/Ws.js';
+import userRouter from './app/routes/userRouter.js';
+import chatRouter from './app/routes/chatRouter.js';
+import registerRouter from './app/routes/registerRouter.js';
+import loginRouter from './app/routes/loginRouter.js';
+import logoutRouter from './app/routes/logoutRouter.js';
+import { accessibleOnLogin, accessibleOnLogout } from './app/middleware/loginAuth.js';
+import Ws from './app/utils/Ws.js';
 
 /* declaration */
 const app = express();
@@ -28,8 +31,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /* define global middlewares ? */
-app.use('/uploads', express.static('../uploads'));
-app.use(express.static('../client/public'));
+app.use('/uploads', express.static('./uploads'));
+app.use(express.static('./public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -44,7 +47,7 @@ app.use(flash());
 app.use(expressEjsLayouts);
 
 app.set('view engine', 'ejs');
-app.set('views', '../client/views');
+app.set('views', './app/views');
 app.set('layout', 'layouts/layout');
 app.set('layout extractScripts', true);
 

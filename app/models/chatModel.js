@@ -1,5 +1,5 @@
 import { randomBytes } from 'node:crypto';
-import db from '../config/database.js';
+import db from './../config/database.js';
 
 const table = 'rooms';
 

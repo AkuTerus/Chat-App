@@ -1,6 +1,7 @@
 import bcryptjs from 'bcryptjs';
-import registerModel from '../models/registerModel.js';
-import loginModel from '../models/loginModel.js';
+
+import registerModel from './../models/registerModel.js';
+import loginModel from './../models/loginModel.js';
 
 export const loginSchemas = {
   email: {

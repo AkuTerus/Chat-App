@@ -1,12 +1,14 @@
 import fs from 'node:fs/promises';
 import { randomBytes, createHash } from 'node:crypto';
+
 import express from 'express';
 import { checkSchema, matchedData, validationResult } from 'express-validator';
 import bcryptjs from 'bcryptjs';
-import upload from '../config/upload.js';
-import { registerSchemas } from '../config/validations.js';
-import registerModel from '../models/registerModel.js';
-import { createTokenOnSuccessLogin } from '../middlewares/loginAuth.js';
+
+import upload from './../config/upload.js';
+import { registerSchemas } from './../config/validations.js';
+import registerModel from './../models/registerModel.js';
+import { createTokenOnSuccessLogin } from './../middleware/loginAuth.js';
 
 const router = express.Router();
 

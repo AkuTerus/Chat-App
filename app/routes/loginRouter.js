@@ -1,8 +1,8 @@
 import express from 'express';
 import { checkSchema, matchedData, validationResult } from 'express-validator';
-import { loginSchemas } from '../config/validations.js';
-import loginModel from '../models/loginModel.js';
-import { createTokenOnSuccessLogin } from '../middlewares/loginAuth.js';
+import { loginSchemas } from './../config/validations.js';
+import loginModel from './../models/loginModel.js';
+import { createTokenOnSuccessLogin } from './../middleware/loginAuth.js';
 
 const router = express.Router();
 
