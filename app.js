@@ -1,3 +1,6 @@
+/* dotenv */
+import 'dotenv/config.js';
+
 /* core modules */
 import http from 'node:http';
 import path from 'node:path';
@@ -11,9 +14,6 @@ import session from 'express-session';
 import flash from 'connect-flash';
 import { Server } from 'socket.io';
 import cookieParser from 'cookie-parser';
-
-/* dotenv */
-import 'dotenv/config.js';
 
 /* router modules */
 import userRouter from './app/routes/userRouter.js';
