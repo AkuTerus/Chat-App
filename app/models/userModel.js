@@ -1,15 +1,15 @@
-import db from './../config/database.js';
+import db from './../../config/database.js';
 
 const table = 'users';
 
 export default {
-  async getUserByEmail(email) {
+  getUserByEmail: async (email) => {
     const query = `SELECT * FROM ${table} WHERE email = ?`;
     const [[rows]] = await db.execute(query, [email]);
     return rows;
   },
 
-  async getHasChat(userId) {
+  getHasChat: async (userId) => {
     const query = `
       SELECT
         r.id AS room_id, r.name AS room_name,
@@ -37,7 +37,7 @@ export default {
     return get;
   },
 
-  async getHasNoChat(userId) {
+  getHasNoChat: async (userId) => {
     const query = `
       SELECT id, name, avatar
       FROM users

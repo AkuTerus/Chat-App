@@ -1,10 +1,10 @@
 import { randomBytes } from 'node:crypto';
-import db from './../config/database.js';
+import db from './../../config/database.js';
 
 const table = 'rooms';
 
 export default {
-  async getUserByToken(token) {
+  getUserByToken: async (token) => {
     const query = `SELECT u.id, u.name, u.avatar
       FROM users u
       INNER JOIN login_details ld ON ld.email=u.email
@@ -14,14 +14,14 @@ export default {
     return user;
   },
 
-  async getPartnerById(id) {
+  getPartnerById: async (id) => {
     const query = `SELECT * FROM users WHERE id = ?`;
     const [[partner]] = await db.execute(query, [id]);
     return partner;
   },
 
   // export
-  async createRoom(userid, partnerid) {
+  createRoom: async (userid, partnerid) => {
     const roomName = randomBytes(16).toString('hex');
 
     const query = `INSERT INTO rooms (name, type) VALUES (?, ?)`;
@@ -39,13 +39,13 @@ export default {
     };
   },
 
-  async getRoomById(roomid) {
+  getRoomById: async (roomid) => {
     const query = `SELECT * FROM rooms WHERE id = ?`;
     const [[room]] = await db.execute(query, [roomid]);
     return room;
   },
 
-  async getUserByRoomId(roomid, userid) {
+  getUserByRoomId: async (roomid, userid) => {
     const query = `
       SELECT u.id, u.name, u.avatar
       FROM users u
@@ -59,7 +59,7 @@ export default {
   },
 
   // export
-  async getPartnerByRoomId(roomid, partnerid) {
+  getPartnerByRoomId: async (roomid, partnerid) => {
     const query = `
       SELECT u.id, u.name, u.avatar
       FROM users u
@@ -72,7 +72,7 @@ export default {
     return partner;
   },
 
-  async getMessagesByRoomId(roomid) {
+  getMessagesByRoomId: async (roomid) => {
     const query = `
       SELECT 
         m.id, m.sender_id, m.message, m.sent_at
@@ -86,7 +86,7 @@ export default {
     return messages;
   },
 
-  async getLatestMessageByLastMessageId(roomid, lastMessageId) {
+  getLatestMessageByLastMessageId: async (roomid, lastMessageId) => {
     const query = `
       SELECT 
       m.id, m.sender_id, m.message, m.sent_at
@@ -100,7 +100,8 @@ export default {
     return messages;
   },
 
-  async createMessage(roomid, userid, message) {
+  createMessage: async (roomid, userid, message) => {
+    console.log(roomid, userid, message);
     const query = `
       INSERT INTO messages (room_id, sender_id, message)
       VALUES (?,?,?)

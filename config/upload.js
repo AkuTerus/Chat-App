@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { randomBytes } from 'node:crypto';
+
 import multer from 'multer';
 
 const renameUploadedFile = async (req, newFilename) => {
@@ -27,5 +28,4 @@ const upload = multer({
     fileSize: 5 * 1024 * 1024, // 5MB
   },
 });
-
 export default upload;

@@ -1,15 +1,15 @@
-import db from './../config/database.js';
+import db from './../../config/database.js';
 
 const table = 'users';
 
 export default {
-  async isNewEmail(email) {
+  isNewEmail: async (email) => {
     const query = `SELECT * FROM ${table} WHERE email = ?`;
     const [[rows]] = await db.execute(query, [email]);
     return !rows ? true : false;
   },
 
-  async createUser(values) {
+  createUser: async (values) => {
     const query = `
       INSERT INTO ${table}
       (name, email, password, avatar)
@@ -20,7 +20,7 @@ export default {
     return insert;
   },
 
-  async insertLoginDetails(data) {
+  insertLoginDetails: async (data) => {
     const query = `
       INSERT INTO 
       login_details (email, token, ip)

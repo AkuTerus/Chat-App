@@ -1,9 +1,9 @@
 import bcryptjs from 'bcryptjs';
 
-import registerModel from './../models/registerModel.js';
-import loginModel from './../models/loginModel.js';
+import registerModel from '../app/models/registerModel.js';
+import loginModel from '../app/models/loginModel.js';
 
-export const loginSchemas = {
+const loginSchema = {
   email: {
     notEmpty: { errorMessage: 'Email cannot be empty', bail: true },
     isEmail: { errorMessage: 'Invalid Email format', bail: true },
@@ -22,7 +22,7 @@ export const loginSchemas = {
   },
 };
 
-export const registerSchemas = {
+const registerSchema = {
   firstname: {
     escape: true,
     notEmpty: {
@@ -98,3 +98,5 @@ export const registerSchemas = {
     },
   },
 };
+
+export { loginSchema, registerSchema };

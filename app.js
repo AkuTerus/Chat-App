@@ -15,13 +15,7 @@ import flash from 'connect-flash';
 import { Server } from 'socket.io';
 import cookieParser from 'cookie-parser';
 
-/* router modules */
-import userRouter from './app/routes/userRouter.js';
-import chatRouter from './app/routes/chatRouter.js';
-import registerRouter from './app/routes/registerRouter.js';
-import loginRouter from './app/routes/loginRouter.js';
-import logoutRouter from './app/routes/logoutRouter.js';
-import { accessibleOnLogin, accessibleOnLogout } from './app/middleware/loginAuth.js';
+import routes from './app/routes.js';
 import Ws from './app/utils/Ws.js';
 
 /* declaration */
@@ -51,35 +45,8 @@ app.set('views', './app/views');
 app.set('layout', 'layouts/layout');
 app.set('layout extractScripts', true);
 
-/*
-|-----------------------------------------------------------------------------
-| Routing
-|-----------------------------------------------------------------------------
-*/
-
-/* first middleware for logging, etc */
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.path} -- `, new Date().toLocaleString());
-  // console.log(`req.session.token = ${req.session.token}`);
-  next();
-});
-
-/* redirect root path */
-app.get('/', (req, res) => {
-  return res.redirect('/user');
-});
-
-/* application path routing */
-app.use('/register', accessibleOnLogout, registerRouter);
-app.use('/login', accessibleOnLogout, loginRouter);
-app.use('/logout', logoutRouter);
-app.use('/user', accessibleOnLogin, userRouter);
-app.use('/chat', accessibleOnLogin, chatRouter);
-
-/* 404 routing handler */
-app.use('*', (req, res, next) => {
-  res.status(404).send('<h1>404 Not Found</h1>');
-});
+/* routing */
+app.use(routes);
 
 const httpServer = http.createServer(app);
 

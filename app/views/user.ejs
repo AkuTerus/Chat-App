@@ -22,11 +22,7 @@
     <% } else { %>
     <!-- else -->
     <% chats.hasChat.forEach(chat => { %>
-    <a
-      href="/chat/<%= chat.room_id %>"
-      data-roomid="<%= chat.room_id %>"
-      data-roomuserid="<%= chat.user_id %>"
-    >
+    <a href="/room/<%= chat.room_id %>" data-roomid="<%= chat.room_id %>" data-roomuserid="<%= chat.user_id %>">
       <div class="content">
         <img src="/uploads/<%= chat.user_avatar %>" alt="" />
         <div class="details">
@@ -131,13 +127,13 @@
         if (res.code != 200) {
           return alert(res.msg);
         }
-        const chatUrl = `/chat/${res.roomid}`;
+        const chatUrl = `/room/${res.roomid}`;
         location.href = chatUrl;
       })
     );
 
     async function createRoom(partnerid) {
-      const doCreateRoom = await fetch(`/chat/room`, {
+      const doCreateRoom = await fetch(`/room`, {
         headers: {
           'Content-Type': 'application/json',
         },
