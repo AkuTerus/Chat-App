@@ -11,7 +11,7 @@ const renameUploadedFile = async (req, newFilename) => {
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, './../uploads');
+    cb(null, './uploads');
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
