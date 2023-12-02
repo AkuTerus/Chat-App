@@ -132,7 +132,7 @@
           return alert(res.msg);
         }
         const chatUrl = `/chat/${res.roomid}`;
-        window.open(chatUrl);
+        location.href = chatUrl;
       })
     );
 
