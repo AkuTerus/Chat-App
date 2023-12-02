@@ -21,7 +21,7 @@ export default {
     let avatar = req.file?.filename;
     // if no uploaded files, set default avatar
     if (!avatar) {
-      const dir = '../uploads/default';
+      const dir = './../../uploads/default';
       const availableFiles = await fs.readdir(dir);
       if (availableFiles.length > 0) {
         const randomIndex = Math.floor(Math.random() * availableFiles.length);
