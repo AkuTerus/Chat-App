@@ -6,7 +6,7 @@ const router = express.Router();
 router.get('/:roomid', async (req, res) => {
   const room = await chatModel.getRoomById(req.params.roomid);
   if (!room) {
-    res.sendStatus(403);
+    return res.sendStatus(403);
   }
 
   const user = await chatModel.getUserByToken(req.session.token);
