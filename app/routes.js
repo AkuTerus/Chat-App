@@ -12,21 +12,16 @@ import registerController from './controllers/registerController.js';
 import loginController from './controllers/loginController.js';
 import logoutController from './controllers/logoutController.js';
 
-/* 
-|-----------------------------------------------------------------------------
-| Routing
-|-----------------------------------------------------------------------------
-*/
 const route = express.Router();
 
-/* first middleware for logging, etc */
+/* logger */
 route.use((req, res, next) => {
   console.log(`${req.method} ${req.path} -- `, new Date().toLocaleString());
   // console.log(`req.session.token = ${req.session.token}`);
   next();
 });
 
-/* redirect root path */
+/* default redirect root path */
 route.get('/', (req, res) => {
   return res.redirect('/user');
 });
@@ -35,21 +30,23 @@ route.get('/', (req, res) => {
 route.use(['/login', '/register'], auth.accessibleOnLogout);
 route.use(['/user', '/room'], auth.accessibleOnLogin);
 
+/* 
+|-----------------------------------------------------------------------------
+| Routing
+|-----------------------------------------------------------------------------
+*/
+
 /* register */
 route.get('/register', registerController.index);
 route.post(
   '/register',
-  [upload.single('avatar'), checkSchema(registerSchema, ['body']), validate, auth.createTokenOnSuccessLogin],
+  [upload.single('avatar'), checkSchema(registerSchema), validate, auth.createTokenOnSuccessLogin],
   registerController.store
 );
 
 /* login */
 route.get('/login', loginController.index);
-route.post(
-  '/login',
-  [checkSchema(loginSchema, ['body']), validate, auth.createTokenOnSuccessLogin],
-  loginController.store
-);
+route.post('/login', [checkSchema(loginSchema), validate, auth.createTokenOnSuccessLogin], loginController.store);
 
 /* logout */
 route.get('/logout', logoutController.index);

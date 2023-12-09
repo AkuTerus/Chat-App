@@ -1,27 +1,33 @@
-import bcryptjs from 'bcryptjs';
+import authService from './../app/services/authService.js';
 
-import registerModel from '../app/models/registerModel.js';
-import loginModel from '../app/models/loginModel.js';
-
+/* loginSchema */
 const loginSchema = {
   email: {
     notEmpty: { errorMessage: 'Email cannot be empty', bail: true },
     isEmail: { errorMessage: 'Invalid Email format', bail: true },
     _isEmailExist: {
       custom: async (value, { req }) => {
-        const user = await loginModel.getUserByEmail(value);
-        if (!user || (user && !bcryptjs.compareSync(req.body.password, user?.password))) {
-          throw new Error('Unauthorized User to Login');
+        const isEmailExist = await authService.isEmailExist(value);
+        if (!isEmailExist) {
+          throw new Error('Invalid Email');
         }
-        return true;
       },
     },
   },
   password: {
     notEmpty: { errorMessage: 'Password cannot be empty', bail: true },
+    _isPasswordMatchByEmail: {
+      custom: async (value, { req }) => {
+        const isPasswordMatchByEmail = await authService.isPasswordMatchByEmail(req.body.email, value);
+        if (!isPasswordMatchByEmail) {
+          throw new Error('Invalid Password');
+        }
+      },
+    },
   },
 };
 
+/* registerSchema */
 const registerSchema = {
   firstname: {
     escape: true,
@@ -31,9 +37,7 @@ const registerSchema = {
     },
     isLength: {
       errorMessage: 'First Name must be at least 2 characters',
-      options: {
-        min: 2,
-      },
+      options: { min: 2 },
     },
   },
   lastname: {
@@ -44,21 +48,19 @@ const registerSchema = {
     },
     isLength: {
       errorMessage: 'Last Name must be at least 2 characters',
-      options: {
-        min: 2,
-      },
+      options: { min: 2 },
     },
   },
   email: {
     notEmpty: { errorMessage: 'Email cannot be empty', bail: true },
-    isEmail: { errorMessage: 'Invalid Email format' },
-    _isNewEmail: {
+    isEmail: { errorMessage: 'Invalid Email format', bail: true },
+    _isEmailExist: {
       custom: async (value, { req }) => {
-        const checkIsNewEmail = await registerModel.isNewEmail(value);
-        if (!checkIsNewEmail) {
+        const isEmailExist = await authService.isEmailExist(value);
+        console.log('isEmailExist');
+        if (isEmailExist) {
           throw new Error('Email is already registered');
         }
-        return true;
       },
     },
   },
@@ -67,33 +69,28 @@ const registerSchema = {
     notEmpty: { errorMessage: 'Password cannot be empty', bail: true },
     isLength: {
       errorMessage: 'Password must be at least 3 characters',
-      options: {
-        min: 3,
-      },
+      options: { min: 3 },
     },
   },
   avatar: {
-    _maxSize: {
-      custom: async (value, { req }) => {
-        if (!req.file) return true;
-
-        const maxSize = 3 * 1024 * 1024; // 3MB
-        if (req.file.size > maxSize) {
-          throw new Error(`File cannot exceed 3 MB`);
-        }
-        return true;
-      },
-      bail: true,
-    },
     _allowedFileTypes: {
-      custom: async (value, { req }) => {
-        if (!req.file) return true;
+      if: (value, { req }) => req.file,
 
+      custom: async (value, { req }) => {
         const allowedFileTypes = ['image/png', 'image/jpg', 'image/jpeg'];
         if (!allowedFileTypes.includes(req.file.mimetype)) {
           throw new Error('Invalid file type. Allowed types: png, jpg, jpeg');
         }
-        return true;
+      },
+      bail: true,
+    },
+
+    _maxSize: {
+      custom: async (value, { req }) => {
+        const maxSize = 3 * 1024 * 1024; // 3MB
+        if (req.file.size > maxSize) {
+          throw new Error('File cannot exceed 3 MB');
+        }
       },
     },
   },
