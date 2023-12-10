@@ -16,7 +16,7 @@ import { Server } from 'socket.io';
 import cookieParser from 'cookie-parser';
 
 import routes from './app/routes.js';
-import Ws from './app/utils/Ws.js';
+import Websocket from './app/utils/Websocket.js';
 
 /* declaration */
 const app = express();
@@ -51,7 +51,7 @@ app.use(routes);
 const httpServer = http.createServer(app);
 
 global.io = new Server(httpServer);
-global.io.on('connect', (socket) => Ws.connect(socket));
+global.io.on('connect', (socket) => Websocket.connect(socket));
 
 httpServer.listen(port);
 httpServer.on('listening', () => {

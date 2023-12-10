@@ -1,4 +1,4 @@
-class Ws {
+class Websocket {
   users = [];
 
   connect(socket) {
@@ -46,6 +46,7 @@ class Ws {
 
     socket.on('__:init_rooms', (data) => {
       console.log('✅✅✅__:init_rooms');
+      console.log('userName: ' + this.users.find((u) => u.socketId == socket.id)?.userName);
       console.log(data);
       const rooms = data.rooms.map((room) => room.roomname);
       socket.join(rooms);
@@ -68,4 +69,4 @@ class Ws {
   }
 }
 
-export default new Ws();
+export default new Websocket();
