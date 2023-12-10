@@ -77,19 +77,21 @@
     const socket = io(location.origin);
 
     socket.on('connect', () => {
+      console.log('connect to user page');
       let rooms = [...roomElems].map((e) => {
         return { roomname: 'room_' + Number(e.dataset.roomid), roomuserid: Number(e.dataset.roomuserid) };
       });
       console.log(rooms);
-      socket.emit('__:init', { userId, userName, rooms });
+      socket.emit('__:init', { userId, userName });
+      socket.emit('__:init_rooms', { rooms });
     });
 
     socket.on('user:get_user_online', (useridonlines) => {
       console.log('user:get_user_online');
-      console.log(useridonlines);
+      console.log('useridonlines => ' + useridonlines);
       roomElems.forEach((e) => {
-        console.log(e);
         if (useridonlines.includes(Number(e.dataset.roomuserid))) {
+          console.log(e);
           let status = e.querySelector('.status-dot');
           status.classList.add('online');
         }
