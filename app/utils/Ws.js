@@ -39,16 +39,20 @@ class Ws {
       this.users.push(userData);
       // }
 
+      socket.broadcast.emit('user:online', userData);
+      console.log('| this.users');
+      console.log(this.users);
+    });
+
+    socket.on('__:init_rooms', (data) => {
+      console.log('✅✅✅__:init_rooms');
+      console.log(data);
       const rooms = data.rooms.map((room) => room.roomname);
       socket.join(rooms);
 
       const roomuserids = data.rooms.map((room) => room.roomuserid);
       const roomuseridonlines = this.users.filter((u) => roomuserids.includes(u.userId)).map((u) => u.userId);
       socket.emit('user:get_user_online', roomuseridonlines);
-
-      socket.broadcast.emit('user:online', userData);
-      console.log('| this.users');
-      console.log(this.users);
     });
 
     socket.on('chat:init', (data) => {
