@@ -1,0 +1,169 @@
+<section class="chat-area">
+  <header>
+    <a href="/user" class="back-icon">
+      <img src="/img/arrow-left-solid.svg" alt="" />
+    </a>
+    <!-- <a href="" class="back-icon"><i class="fas fa-arrow-left"></i></a> -->
+    <img src="/uploads/<%= partner.avatar %>" alt="" />
+    <div class="details">
+      <span><%= partner.name %></span>
+      <p id="participant-status" class="participant-status">Online</p>
+    </div>
+  </header>
+  <div class="chat-box">
+    <% messages.forEach(msg => { %>
+    <!--  -->
+    <% if (msg.sender_id == user.id) { %>
+    <div class="chat outgoing">
+      <div class="details">
+        <p><%= msg.message %></p>
+      </div>
+    </div>
+    <!--  -->
+    <% } else { %>
+    <div class="chat incoming">
+      <img src="/uploads/<%= partner.avatar %>" alt="" />
+      <div class="details">
+        <p><%= msg.message %></p>
+      </div>
+    </div>
+    <% } %>
+    <!--  -->
+    <% }) %>
+  </div>
+  <input type="hidden" id="__roomid" value="<%= room.id %>" />
+  <input type="hidden" id="__partnerid" value="<%= partner.id %>" />
+  <input type="hidden" id="__last_message_id" value="<%= messages.length == 0 ? 0 : messages.at(-1).id %>" />
+  <div class="typing-area">
+    <input id="message" type="text" placeholder="Type a message here..." />
+    <button type="button" id="send_message">
+      <img src="/img/telegram.svg" alt="" />
+    </button>
+  </div>
+</section>
+<script>
+  const chatBox = document.querySelector(`.chat-box`);
+  const roomid = document.querySelector(`#__roomid`);
+  const partnerid = document.querySelector(`#__partnerid`);
+  const lastMessageId = document.querySelector(`#__last_message_id`);
+  const messageInput = document.querySelector(`#message`);
+  const sendMessageButton = document.querySelector(`#send_message`);
+  const participantStatus = document.querySelector(`#participant-status`);
+
+  // auto scroll to scrollHeight
+  chatBox.scroll(0, chatBox.scrollHeight);
+
+  (async () => {
+    const userId = Number('<%= user.id %>');
+    const userName = '<%= user.name %>';
+    /*
+    |-----------------------------------------------------------------------------
+    | Socket
+    |-----------------------------------------------------------------------------
+    */
+    const socket = io(location.origin);
+    const socketRoom = 'room_' + roomid.value;
+
+    socket.on('connect', () => {
+      socket.emit('__:init', { userId: userId, userName: userName });
+      socket.emit('chat:init', { socketRoom: socketRoom });
+    });
+
+    socket.on('user:online', (data) => {
+      console.log('on user:online');
+      participantStatus.innerText = 'Online';
+    });
+
+    socket.on('user:offline', (data) => {
+      console.log('on user:offline');
+      participantStatus.innerText = '';
+    });
+
+    socket.on('chat:new_message', (data) => {
+      console.log('chat:new_message');
+      updateChat();
+    });
+
+    sendMessageButton.addEventListener('click', async (e) => {
+      await doPostMessage(roomid.value, messageInput.value.trim());
+      updateChat();
+    });
+
+    messageInput.addEventListener('keypress', async (e) => {
+      if (e.key != 'Enter') return;
+      await doPostMessage(roomid.value, messageInput.value.trim());
+      updateChat();
+    });
+
+    async function doPostMessage(roomid, message) {
+      if (message) {
+        const newMessage = await postMessage(roomid, message);
+        messageInput.value = '';
+        console.log('masuk message');
+
+        socket.emit('chat:send_message', {
+          roomid: Number(roomid),
+          partnerid: Number(partnerid.value),
+          socketRoom: socketRoom,
+          newMessage: newMessage,
+        });
+      }
+    }
+
+    async function postMessage(roomid, message) {
+      const fetchPostMessage = await fetch(`/room/message`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        body: JSON.stringify({
+          roomid: roomid,
+          message: message,
+        }),
+      });
+      const res = await fetchPostMessage.json();
+      return res;
+    }
+
+    async function getLatestMessage(roomid, lastMessageId) {
+      const fetchPostMessage = await fetch(`/room/${roomid}/latestMessage/${lastMessageId}`);
+      const res = await fetchPostMessage.json();
+      return res;
+    }
+
+    function buildChatElement(messages) {
+      const userid = Number('<%= user.id %>');
+      const chatElement = messages.reduce((str, msg) => {
+        if (msg.sender_id == userid) {
+          return (
+            str +
+            `<div class="chat outgoing">
+              <div class="details">
+                <p>${msg.message}</p>
+              </div>
+            </div>`
+          );
+        } else {
+          return (
+            str +
+            `<div class="chat incoming">
+              <img src="/uploads/<%= partner.avatar %>" alt="" />
+              <div class="details">
+                <p>${msg.message}</p>
+              </div>
+            </div>`
+          );
+        }
+      }, ``);
+      return chatElement;
+    }
+
+    async function updateChat() {
+      const latestMessages = await getLatestMessage(roomid.value, lastMessageId.value);
+      const chatElement = buildChatElement(latestMessages);
+      chatBox.innerHTML += chatElement;
+      chatBox.scroll(0, chatBox.scrollHeight);
+      lastMessageId.value = latestMessages.at(-1).id;
+    }
+  })();
+</script>

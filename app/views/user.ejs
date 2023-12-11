@@ -1,0 +1,166 @@
+<section class="users">
+  <header>
+    <div class="content">
+      <img src="/uploads/<%- user.avatar %>" alt="" />
+      <div class="details">
+        <span><%- user.name %></span>
+        <p>Online</p>
+      </div>
+    </div>
+    <a href="/logout" class="logout" onclick="return alert('Logged Out')">Logout</a>
+  </header>
+
+  <div class="search">
+    <span class="text">Chatting with</span>
+    <!-- <button class="text">Search User</button> -->
+    <input type="text" placeholder="Enter name to search..." />
+    <button><img src="/img/magnifying-glass-solid.svg" alt="" /></button>
+  </div>
+  <div class="users-list has-chat">
+    <% if (chats.hasChat.length == 0) { %>
+    <i>You haven't chatted with anyone yet</i>
+    <% } else { %>
+    <!-- else -->
+    <% chats.hasChat.forEach(chat => { %>
+    <a href="/room/<%= chat.room_id %>" data-roomid="<%= chat.room_id %>" data-roomuserid="<%= chat.user_id %>">
+      <div class="content">
+        <img src="/uploads/<%= chat.user_avatar %>" alt="" />
+        <div class="details">
+          <span><%= chat.user_name %></span>
+          <p><%= chat.latest_sender_id == user.id ? 'You: ' : '' %><%= chat.latest_message %></p>
+        </div>
+      </div>
+      <div class="status-dot"><img src="/img/circle-solid.svg" alt="" /></div>
+    </a>
+    <% }) %>
+    <!-- else close -->
+    <% } %>
+  </div>
+
+  <div class="search">
+    <span class="text">Select user to start chat</span>
+  </div>
+  <div class="users-list">
+    <!-- if -->
+    <% if (chats.hasNoChat.length == 0) { %>
+    <i>There is no other user yet</i>
+    <% } else { %>
+    <!-- else -->
+    <% chats.hasNoChat.forEach(user => { %>
+    <a data-userid="<%= user.id %>">
+      <div class="content">
+        <img src="/uploads/<%= user.avatar %>" alt="" />
+        <div class="details">
+          <span><%= user.name %></span>
+        </div>
+      </div>
+      <!-- <div class="status-dot"><i class="fas fa-circle"></i></div> -->
+    </a>
+    <% }) %>
+    <!-- else close -->
+    <% } %>
+  </div>
+</section>
+<input type="hidden" id="__userid" value="<%= user.id %>" />
+<script>
+  const otherUsers = document.querySelectorAll(`a[data-userid]`);
+  const roomElems = document.querySelectorAll(`a[data-roomid]`);
+  let userId = Number('<%= user.id %>');
+  let userName = '<%= user.name %>';
+
+  (async () => {
+    /*
+    |-----------------------------------------------------------------------------
+    | Socket
+    |-----------------------------------------------------------------------------
+    */
+    const socket = io(location.origin);
+
+    socket.on('connect', () => {
+      console.log('connect to user page');
+      let rooms = [...roomElems].map((e) => {
+        return { roomname: 'room_' + Number(e.dataset.roomid), roomuserid: Number(e.dataset.roomuserid) };
+      });
+      console.log(rooms);
+      socket.emit('__:init', { userId, userName });
+      socket.emit('__:init_rooms', { rooms });
+    });
+
+    socket.on('user:get_user_online', (useridonlines) => {
+      console.log('user:get_user_online');
+      console.log('useridonlines => ' + useridonlines);
+      roomElems.forEach((e) => {
+        if (useridonlines.includes(Number(e.dataset.roomuserid))) {
+          console.log(e);
+          let status = e.querySelector('.status-dot');
+          status.classList.add('online');
+        }
+      });
+    });
+
+    socket.on('user:online', (data) => {
+      console.log('on user:online');
+      console.log(`${data.userName} is online (logged in)`);
+      let userRoom = [...roomElems].find((e) => Number(e.dataset.roomuserid) == data.userId);
+      if (!userRoom) return;
+
+      let status = userRoom.querySelector('.status-dot');
+      status.classList.add('online');
+    });
+
+    socket.on('user:offline', (data) => {
+      console.log('on user:offline');
+      console.log(`${data.userName} is offline`);
+      let userRoom = [...roomElems].find((e) => Number(e.dataset.roomuserid) == data.userId);
+      if (!userRoom) return;
+
+      let status = userRoom.querySelector('.status-dot');
+      status.classList.remove('online');
+    });
+
+    socket.on('chat:new_message', (data) => {
+      console.log('on chat:new_message');
+      console.log(data);
+      let room = [...roomElems].find((e) => e.dataset.roomid == data.roomid);
+      if (room) {
+        const { sender_id, message } = data.newMessage;
+        const roomMessageElem = room.querySelector('.details p');
+        const newLatestMessage = (sender_id == userId ? 'You: ' : '') + message;
+        roomMessageElem.innerText = newLatestMessage;
+      }
+    });
+
+    /*
+    |-----------------------------------------------------------------------------
+    | Common
+    |-----------------------------------------------------------------------------
+    */
+    otherUsers.forEach((otherUser) =>
+      otherUser.addEventListener(`click`, async (e) => {
+        const partnerid = otherUser.dataset.userid;
+        const res = await createRoom(partnerid);
+
+        if (res.code != 200) {
+          return alert(res.msg);
+        }
+        const chatUrl = `/room/${res.roomid}`;
+        location.href = chatUrl;
+      })
+    );
+
+    async function createRoom(partnerid) {
+      const doCreateRoom = await fetch(`/room`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        body: JSON.stringify({
+          partnerid: partnerid,
+        }),
+      });
+      const res = await doCreateRoom.json();
+      return res;
+    }
+  })();
+</script>
+<script defer src="/js/user.js"></script>
