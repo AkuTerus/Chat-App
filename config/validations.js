@@ -3,8 +3,8 @@ import authService from './../app/services/authService.js';
 /* loginSchema */
 const loginSchema = {
   email: {
-    notEmpty: { errorMessage: 'Email cannot be empty', bail: true },
-    isEmail: { errorMessage: 'Invalid Email format', bail: true },
+    notEmpty: { errorMessage: 'Email cannot be empty' },
+    isEmail: { errorMessage: 'Invalid Email format' },
     _isEmailExist: {
       custom: async (value, { req }) => {
         const isEmailExist = await authService.isEmailExist(value);
@@ -15,7 +15,7 @@ const loginSchema = {
     },
   },
   password: {
-    notEmpty: { errorMessage: 'Password cannot be empty', bail: true },
+    notEmpty: { errorMessage: 'Password cannot be empty' },
     _isPasswordMatchByEmail: {
       custom: async (value, { req }) => {
         const isPasswordMatchByEmail = await authService.isPasswordMatchByEmail(req.body.email, value);
@@ -33,7 +33,6 @@ const registerSchema = {
     escape: true,
     notEmpty: {
       errorMessage: 'First Name cannot be empty',
-      bail: true,
     },
     isLength: {
       errorMessage: 'First Name must be at least 2 characters',
@@ -44,7 +43,6 @@ const registerSchema = {
     escape: true,
     notEmpty: {
       errorMessage: 'Last Name cannot be empty',
-      bail: true,
     },
     isLength: {
       errorMessage: 'Last Name must be at least 2 characters',
@@ -52,8 +50,8 @@ const registerSchema = {
     },
   },
   email: {
-    notEmpty: { errorMessage: 'Email cannot be empty', bail: true },
-    isEmail: { errorMessage: 'Invalid Email format', bail: true },
+    notEmpty: { errorMessage: 'Email cannot be empty' },
+    isEmail: { errorMessage: 'Invalid Email format' },
     _isEmailExist: {
       custom: async (value, { req }) => {
         const isEmailExist = await authService.isEmailExist(value);
@@ -65,8 +63,10 @@ const registerSchema = {
     },
   },
   password: {
-    escape: true,
-    notEmpty: { errorMessage: 'Password cannot be empty', bail: true },
+    // escape: true,
+    notEmpty: {
+      errorMessage: 'Password cannot be empty',
+    },
     isLength: {
       errorMessage: 'Password must be at least 3 characters',
       options: { min: 3 },
@@ -82,12 +82,11 @@ const registerSchema = {
           throw new Error('Invalid file type. Allowed types: png, jpg, jpeg');
         }
       },
-      bail: true,
     },
 
     _maxSize: {
       custom: async (value, { req }) => {
-        const maxSize = 3 * 1024 * 1024; // 3MB
+        const maxSize = 3; // 3MB
         if (req.file.size > maxSize) {
           throw new Error('File cannot exceed 3 MB');
         }
