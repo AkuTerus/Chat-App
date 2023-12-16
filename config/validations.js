@@ -85,6 +85,8 @@ const registerSchema = {
     },
 
     _maxSize: {
+      if: (value, { req }) => req.file,
+
       custom: async (value, { req }) => {
         const maxSize = 3; // 3MB
         if (req.file.size > maxSize) {
