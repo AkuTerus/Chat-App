@@ -16,7 +16,8 @@ const route = express.Router();
 
 /* logger */
 route.use((req, res, next) => {
-  console.log(`${req.method} ${req.path} -- `, new Date().toLocaleString());
+  const now = new Date().toLocaleString('id-ID', { hour12: false, timeZone: 'Asia/Jakarta' });
+  console.log(`${now} (${req.ip}) .....  ${req.method} ${req.path}`);
   // console.log(`req.session.token = ${req.session.token}`);
   next();
 });
@@ -26,15 +27,15 @@ route.get('/', (req, res) => {
   return res.redirect('/user');
 });
 
-/* middleware for menu accesibility */
-route.use(['/login', '/register'], auth.accessibleOnLogout);
-route.use(['/user', '/room'], auth.accessibleOnLogin);
-
 /* 
 |-----------------------------------------------------------------------------
 | Routing
 |-----------------------------------------------------------------------------
 */
+
+/* middleware for menu accesibility */
+route.use(['/login', '/register'], auth.accessibleOnLogout);
+route.use(['/user', '/room'], auth.accessibleOnLogin);
 
 /* register */
 route.get('/register', registerController.index);
