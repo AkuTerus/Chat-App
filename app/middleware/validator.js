@@ -2,14 +2,7 @@ import fs from 'node:fs/promises';
 import { validationResult } from 'express-validator';
 
 const validate = async (req, res, next) => {
-  console.log('### validator.validate -- req.body : ');
-  console.log(req.body);
-  console.log('### validator.validate -- req.file : ');
-  console.log(req.file);
-  console.log(req.body.firstname);
   const errors = validationResult(req);
-  console.log('### validator.validate -- validationResult errors : ');
-  console.log(errors.array());
   if (errors.isEmpty()) {
     return next();
   }
