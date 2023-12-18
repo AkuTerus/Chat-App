@@ -40,6 +40,7 @@ app.use(
 app.use(flash());
 app.use(expressEjsLayouts);
 
+app.set('trust proxy', true);
 app.set('view engine', 'ejs');
 app.set('views', './app/views');
 app.set('layout', 'layouts/layout');
